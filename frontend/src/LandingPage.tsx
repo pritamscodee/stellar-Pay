@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { SignInButton, SignUpButton } from "@clerk/clerk-react";
 import { useTheme } from "./ThemeProvider";
 
@@ -21,6 +22,7 @@ const features = [
 
 export default function LandingPage() {
   const { theme, toggle } = useTheme();
+  const [mobileOpen, setMobileOpen] = useState(false);
   return (
     <div className="min-h-screen bg-surface flex flex-col">
       <header className="border-b border-border-gray bg-surface/80 backdrop-blur-sm sticky top-0 z-20">
@@ -49,18 +51,47 @@ export default function LandingPage() {
                 </svg>
               )}
             </button>
+            <div className="hidden md:flex items-center gap-2">
+              <SignInButton mode="modal">
+                <button className="inline-flex items-center justify-center px-5 py-[9px] rounded-[12px] font-ui text-sm font-medium cursor-pointer transition-all duration-150 bg-surface text-kraken-purple-dark border border-kraken-purple-dark hover:bg-kraken-purple-subtle">
+                  Sign In
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="inline-flex items-center justify-center px-5 py-[9px] rounded-[12px] font-ui text-sm font-medium cursor-pointer transition-all duration-150 bg-kraken-purple text-white hover:bg-kraken-purple-deep shadow-sm">
+                  Get Started
+                </button>
+              </SignUpButton>
+            </div>
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="md:hidden w-9 h-9 flex items-center justify-center rounded-[10px] border border-border-gray bg-surface text-silver-blue hover:text-near-black cursor-pointer transition-all duration-150"
+              aria-label="Toggle menu"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                {mobileOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                )}
+              </svg>
+            </button>
+          </div>
+        </div>
+        {mobileOpen && (
+          <div className="md:hidden border-t border-border-gray bg-surface px-6 py-4 flex flex-col gap-3">
             <SignInButton mode="modal">
-              <button className="inline-flex items-center justify-center px-5 py-[9px] rounded-[12px] font-ui text-sm font-medium cursor-pointer transition-all duration-150 bg-surface text-kraken-purple-dark border border-kraken-purple-dark hover:bg-kraken-purple-subtle">
+              <button className="w-full inline-flex items-center justify-center px-5 py-[9px] rounded-[12px] font-ui text-sm font-medium cursor-pointer transition-all duration-150 bg-surface text-kraken-purple-dark border border-kraken-purple-dark hover:bg-kraken-purple-subtle">
                 Sign In
               </button>
             </SignInButton>
             <SignUpButton mode="modal">
-              <button className="inline-flex items-center justify-center px-5 py-[9px] rounded-[12px] font-ui text-sm font-medium cursor-pointer transition-all duration-150 bg-kraken-purple text-white hover:bg-kraken-purple-deep shadow-sm">
+              <button className="w-full inline-flex items-center justify-center px-5 py-[9px] rounded-[12px] font-ui text-sm font-medium cursor-pointer transition-all duration-150 bg-kraken-purple text-white hover:bg-kraken-purple-deep shadow-sm">
                 Get Started
               </button>
             </SignUpButton>
           </div>
-        </div>
+        )}
       </header>
 
       <main className="flex-1">
@@ -141,6 +172,65 @@ export default function LandingPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-app-bg border-t border-border-gray py-20 md:py-28">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[8px] text-xs font-medium bg-orange-500/10 text-orange-600 mb-4">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+                </svg>
+                Rust Stack
+              </div>
+              <h2 className="font-display text-[36px] md:text-[44px] font-bold tracking-[-0.5px] leading-[1.22] text-near-black mb-4">
+                Powered by <span className="text-orange-500">Rust</span>
+              </h2>
+              <p className="text-[18px] text-cool-gray max-w-[560px] mx-auto">
+                Smart contracts and backend infrastructure, written in Rust for safety, performance, and zero-cost abstractions.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-5">
+              {[
+                {
+                  title: "Soroban SDK",
+                  desc: "no_std smart contracts compiled to WASM. Proc-macro-driven #[contract] framework with built-in auth, storage, and event system.",
+                  items: ["#![no_std] + wasm32v1-none", "env.storage().instance().set/get", "voter.require_auth()", "env.events().publish()"],
+                },
+                {
+                  title: "Axum + Tokio",
+                  desc: "Async HTTP server with SSE streaming. Broadcast channels fan out events to all connected clients in real-time.",
+                  items: ["#[tokio::main] async runtime", "broadcast::channel pub/sub", "async_stream for SSE generators", "CorsLayer for dApp origin"],
+                },
+                {
+                  title: "Cross-Contract Calls",
+                  desc: "Two Soroban contracts communicating via contractimport. Reward contract calls Poll contract to verify votes.",
+                  items: ["#[contractimport] WASM binding gen", "typed client = Client::new(&env, &addr)", "3 tests with mock_auth", "inter-contract composability"],
+                },
+              ].map((stack) => (
+                <div key={stack.title} className="bg-surface border border-border-gray rounded-[14px] p-6 shadow-card">
+                  <div className="flex items-center gap-2.5 mb-4">
+                    <div className="w-8 h-8 bg-orange-500/10 rounded-[8px] flex items-center justify-center text-orange-500 text-sm font-bold shrink-0">{"</>"}</div>
+                    <h3 className="font-ui text-[17px] font-semibold text-near-black">{stack.title}</h3>
+                  </div>
+                  <p className="text-silver-blue text-sm leading-relaxed mb-4">{stack.desc}</p>
+                  <ul className="space-y-1.5">
+                    {stack.items.map((item) => (
+                      <li key={item} className="flex items-center gap-2 text-xs text-near-black font-mono">
+                        <span className="w-1 h-1 rounded-full bg-orange-400 shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <div className="mt-8 text-center">
+              <p className="text-xs text-silver-blue font-mono">
+                soroban-sdk = "27.0.0-rc.1" · axum = "0.8" · tokio = "1" · wasm32v1-none
+              </p>
             </div>
           </div>
         </section>
