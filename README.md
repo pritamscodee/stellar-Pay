@@ -360,6 +360,7 @@ All interactions are verifiable on Stellar Expert:
 | 3 | **Cast Vote** | `60b5477f…` | [View ↗](https://stellar.expert/explorer/testnet/tx/60b5477f6a1e167b79bdd90bdcaa5512607a150e33387fd07f2be1c0579f174b) | 2026-06-23 |
 
 ---
+![Uploading image.png…]()
 
 ## 🛠️ Tech Stack
 
