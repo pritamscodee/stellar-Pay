@@ -22,3 +22,5 @@ contracts/*/*.wasm
 
 # Netlify
 .netlify/
+
+.vercel
