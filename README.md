@@ -392,6 +392,7 @@ All interactions are verifiable on Stellar Expert:
 
 ## 📬 Deliverables
 
+
 - **Live Demo**: [https://frontend-one-rose-14.vercel.app](https://frontend-one-rose-14.vercel.app)
 - **Contract ID**: `CDROSAGWRIQG5TSRF2FFFFXZD3RGPWDS6I3IWUTC67MELRRLZHNOE6ID`
 - **Init Tx Hash**: `1cc3507973ab0f7a5b2aa1e8f0bc772f1efa9a3697eb600d170f927129fd7a70`
