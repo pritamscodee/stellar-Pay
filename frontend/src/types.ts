@@ -1,7 +1,5 @@
-export type WalletId = string;
-
 export interface WalletInfo {
-  id: WalletId;
+  id: string;
   name: string;
   icon: string;
   isAvailable: boolean;
@@ -21,12 +19,12 @@ export interface PollResults {
 }
 
 export interface TxStatus {
-  status: "idle" | "pending" | "success" | "fail";
+  status: "idle" | "pending" | "confirming" | "success" | "fail";
   hash?: string;
   error?: string;
 }
 
-export type FeedbackType = "success" | "error" | "info";
+export type FeedbackType = "success" | "error";
 
 export interface Feedback {
   type: FeedbackType;
@@ -42,7 +40,16 @@ export interface VoteEvent {
   txHash: string;
 }
 
-export interface BackendEvent {
-  type: "Vote" | "PollCreated";
-  data: VoteEvent | { pollId: string; question: string; creator: string; deadline: number; txHash: string };
+export interface PollCreatedEvent {
+  pollId: string;
+  question: string;
+  creator: string;
+  deadline: number;
+  txHash: string;
 }
+
+export type BackendEvent =
+  | { type: "Vote"; data: VoteEvent }
+  | { type: "PollCreated"; data: PollCreatedEvent };
+
+export type SseStatus = "connected" | "disconnected" | "reconnecting";

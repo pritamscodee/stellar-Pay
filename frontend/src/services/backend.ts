@@ -1,33 +1,56 @@
-import type { BackendEvent } from "../types";
+import type { BackendEvent, SseStatus } from "../types";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
 
 export function subscribeToEvents(
   onEvent: (event: BackendEvent) => void,
-  onError?: (err: Event) => void
+  onStatusChange?: (status: SseStatus) => void
 ): () => void {
-  const eventSource = new EventSource(`${BACKEND_URL}/api/events`);
+  let eventSource: EventSource | null = null;
+  let closed = false;
+  let retryDelay = 1000;
 
-  eventSource.onmessage = (msg) => {
-    try {
-      const data = JSON.parse(msg.data);
+  function connect() {
+    if (closed) return;
 
-      if (data.type === "Vote") {
-        onEvent({ type: "Vote", data: data.data });
-      } else if (data.type === "PollCreated") {
-        onEvent({ type: "PollCreated", data: data.data });
+    eventSource?.close();
+    eventSource = new EventSource(`${BACKEND_URL}/api/events`);
+    onStatusChange?.("reconnecting");
+
+    eventSource.onmessage = (msg) => {
+      try {
+        const data = JSON.parse(msg.data);
+        if (data.type === "Vote") {
+          onEvent({ type: "Vote", data: data.data });
+        } else if (data.type === "PollCreated") {
+          onEvent({ type: "PollCreated", data: data.data });
+        }
+      } catch {
+        // ignore parse errors
       }
-    } catch {
-      // ignore parse errors
-    }
-  };
+    };
 
-  eventSource.onerror = (err) => {
-    onError?.(err);
-  };
+    eventSource.onopen = () => {
+      retryDelay = 1000;
+      onStatusChange?.("connected");
+    };
+
+    eventSource.onerror = () => {
+      onStatusChange?.("disconnected");
+      eventSource?.close();
+      if (!closed) {
+        setTimeout(connect, retryDelay);
+        retryDelay = Math.min(retryDelay * 2, 30000);
+      }
+    };
+  }
+
+  connect();
 
   return () => {
-    eventSource.close();
+    closed = true;
+    eventSource?.close();
+    onStatusChange?.("disconnected");
   };
 }
 

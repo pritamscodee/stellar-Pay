@@ -6,6 +6,7 @@ import {
   getAddress,
   disconnectWallet,
   getSupportedWallets,
+  onWalletChange,
   WalletError,
   getWalletErrorLabel,
 } from "./services/wallets";
@@ -15,6 +16,8 @@ import {
   getPollInfo,
   getResults,
   hasVoted,
+  waitForTxConfirmation,
+  fetchBalance,
   truncateKey,
   buildExplorerUrl,
 } from "./services/contract";
@@ -23,7 +26,7 @@ import {
   publishVoteEvent,
   publishPollCreatedEvent,
 } from "./services/backend";
-import type { WalletInfo, PollInfo, Feedback, TxStatus } from "./types";
+import type { WalletInfo, PollInfo, Feedback, TxStatus, SseStatus } from "./types";
 
 const CONTRACT_ID = import.meta.env.VITE_CONTRACT_ID || "CDROSAGWRIQG5TSRF2FFFFXZD3RGPWDS6I3IWUTC67MELRRLZHNOE6ID";
 
@@ -38,6 +41,7 @@ const DEMO_POLL: PollInfo = {
 export default function Dashboard() {
   const { user } = useUser();
   const [publicKey, setPublicKey] = useState<string | null>(null);
+  const [balance, setBalance] = useState<string | null>(null);
   const [wallets, setWallets] = useState<WalletInfo[]>([]);
   const [isConnecting, setIsConnecting] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
@@ -45,15 +49,20 @@ export default function Dashboard() {
 
   const [poll, setPoll] = useState<PollInfo>(DEMO_POLL);
   const [pollResults, setPollResults] = useState<number[]>(DEMO_POLL.options.map(() => 0));
+  const [pollLoading, setPollLoading] = useState(true);
   const [alreadyVoted, setAlreadyVoted] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [showCreatePoll, setShowCreatePoll] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
   const [newOptions, setNewOptions] = useState(["", ""]);
+  const [newDeadline, setNewDeadline] = useState(3);
+  const [deadlineUnit, setDeadlineUnit] = useState<"days" | "hours">("days");
   const [liveEvents, setLiveEvents] = useState<Array<{ voter: string; option: number; time: Date }>>([]);
+  const [sseStatus, setSseStatus] = useState<SseStatus>("disconnected");
 
   const refreshInterval = useRef<ReturnType<typeof setInterval>>(undefined);
+  const actionLock = useRef(false);
 
   const refreshResults = useCallback(async () => {
     if (!CONTRACT_ID) return;
@@ -65,7 +74,15 @@ export default function Dashboard() {
     if (info) {
       setPoll((prev) => ({ ...prev, ...info }));
     }
+    setPollLoading(false);
   }, [poll.options.length]);
+
+  const loadBalance = useCallback(async (key: string) => {
+    const result = await fetchBalance(key);
+    if (!result.isError) {
+      setBalance(parseFloat(result.balance).toFixed(2));
+    }
+  }, []);
 
   useEffect(() => {
     initKit("TESTNET");
@@ -80,13 +97,28 @@ export default function Dashboard() {
         }))
       );
     });
+
+    const unsubWallet = onWalletChange((address) => {
+      if (address && address !== publicKey) {
+        setPublicKey(address);
+        setAlreadyVoted(false);
+        setTxStatus({ status: "idle" });
+        setFeedback({ type: "success", message: "Wallet switched. Refreshing data..." });
+      } else if (!address) {
+        setPublicKey(null);
+      }
+    });
+
+    return () => {
+      unsubWallet?.();
+    };
   }, []);
 
   useEffect(() => {
     const unsubscribe = subscribeToEvents(
       (event) => {
         if (event.type === "Vote") {
-          const { voter, optionIndex } = event.data as any;
+          const { voter, optionIndex } = event.data;
           setLiveEvents((prev) =>
             [{ voter, option: optionIndex, time: new Date() }, ...prev].slice(0, 20)
           );
@@ -98,22 +130,29 @@ export default function Dashboard() {
             return copy;
           });
           setPoll((prev) => ({ ...prev, totalVotes: prev.totalVotes + 1 }));
+        } else if (event.type === "PollCreated") {
+          setFeedback({
+            type: "success",
+            message: "New poll created! Refreshing data...",
+          });
+          refreshResults();
         }
       },
-      () => {}
+      (status) => setSseStatus(status)
     );
     return unsubscribe;
-  }, []);
+  }, [refreshResults]);
 
   useEffect(() => {
     if (!publicKey) return;
     checkAlreadyVoted();
     refreshResults();
+    loadBalance(publicKey);
     refreshInterval.current = setInterval(refreshResults, 10000);
     return () => {
       if (refreshInterval.current) clearInterval(refreshInterval.current);
     };
-  }, [publicKey, refreshResults]);
+  }, [publicKey, refreshResults, loadBalance]);
 
   const checkAlreadyVoted = async () => {
     if (!publicKey) return;
@@ -122,6 +161,8 @@ export default function Dashboard() {
   };
 
   const handleConnect = async () => {
+    if (actionLock.current) return;
+    actionLock.current = true;
     setIsConnecting(true);
     setFeedback(null);
     try {
@@ -139,12 +180,14 @@ export default function Dashboard() {
       }
     } finally {
       setIsConnecting(false);
+      actionLock.current = false;
     }
   };
 
   const handleDisconnect = async () => {
     await disconnectWallet();
     setPublicKey(null);
+    setBalance(null);
     setPollResults(DEMO_POLL.options.map(() => 0));
     setAlreadyVoted(false);
     setTxStatus({ status: "idle" });
@@ -153,7 +196,8 @@ export default function Dashboard() {
   };
 
   const handleVote = async (optionIndex: number) => {
-    if (!publicKey || alreadyVoted) return;
+    if (!publicKey || alreadyVoted || actionLock.current) return;
+    actionLock.current = true;
     setIsVoting(true);
     setFeedback(null);
     setTxStatus({ status: "pending" });
@@ -161,12 +205,25 @@ export default function Dashboard() {
     const result = await castVote(publicKey, optionIndex, CONTRACT_ID);
 
     if (result.txHash) {
-      setTxStatus({ status: "success", hash: result.txHash });
-      setFeedback({
-        type: "success",
-        message: "Vote cast successfully!",
-        txHash: result.txHash,
-      });
+      setTxStatus({ status: "confirming", hash: result.txHash });
+
+      const confirm = await waitForTxConfirmation(result.txHash);
+
+      if (confirm.status === "confirmed") {
+        setTxStatus({ status: "success", hash: result.txHash });
+        setFeedback({
+          type: "success",
+          message: "Vote confirmed on ledger!",
+          txHash: result.txHash,
+        });
+      } else {
+        setTxStatus({ status: "success", hash: result.txHash });
+        setFeedback({
+          type: "success",
+          message: "Vote submitted (awaiting confirmation)",
+          txHash: result.txHash,
+        });
+      }
       setAlreadyVoted(true);
 
       publishVoteEvent(
@@ -189,15 +246,18 @@ export default function Dashboard() {
     }
 
     setIsVoting(false);
+    actionLock.current = false;
   };
 
   const handleCreatePoll = async () => {
-    if (!publicKey || !newQuestion || newOptions.length < 2) return;
+    if (!publicKey || !newQuestion || newOptions.filter((o) => o.trim()).length < 2 || actionLock.current) return;
+    actionLock.current = true;
     setIsCreating(true);
     setFeedback(null);
     setTxStatus({ status: "pending" });
 
-    const deadline = Math.floor(Date.now() / 1000) + 86400 * 3;
+    const multiplier = deadlineUnit === "days" ? 86400 : 3600;
+    const deadline = Math.floor(Date.now() / 1000) + multiplier * newDeadline;
     const filteredOptions = newOptions.filter((o) => o.trim());
 
     const result = await createPoll(
@@ -209,12 +269,25 @@ export default function Dashboard() {
     );
 
     if (result.txHash) {
-      setTxStatus({ status: "success", hash: result.txHash });
-      setFeedback({
-        type: "success",
-        message: "Poll created successfully!",
-        txHash: result.txHash,
-      });
+      setTxStatus({ status: "confirming", hash: result.txHash });
+
+      const confirm = await waitForTxConfirmation(result.txHash);
+
+      if (confirm.status === "confirmed") {
+        setTxStatus({ status: "success", hash: result.txHash });
+        setFeedback({
+          type: "success",
+          message: "Poll created and confirmed on ledger!",
+          txHash: result.txHash,
+        });
+      } else {
+        setTxStatus({ status: "success", hash: result.txHash });
+        setFeedback({
+          type: "success",
+          message: "Poll created (awaiting confirmation)",
+          txHash: result.txHash,
+        });
+      }
 
       publishPollCreatedEvent(
         CONTRACT_ID,
@@ -235,12 +308,14 @@ export default function Dashboard() {
       setShowCreatePoll(false);
       setNewQuestion("");
       setNewOptions(["", ""]);
+      setNewDeadline(3);
     } else {
       setTxStatus({ status: "fail", error: result.error });
       setFeedback({ type: "error", message: result.error || "Failed to create poll" });
     }
 
     setIsCreating(false);
+    actionLock.current = false;
   };
 
   const addOption = () => setNewOptions((prev) => [...prev, ""]);
@@ -249,6 +324,20 @@ export default function Dashboard() {
 
   const pollActive = poll.deadline > Math.floor(Date.now() / 1000);
   const totalVotes = pollResults.reduce((a, b) => a + b, 0);
+
+  const sseColor =
+    sseStatus === "connected"
+      ? "bg-green"
+      : sseStatus === "reconnecting"
+      ? "bg-yellow-400"
+      : "bg-error";
+
+  const sseLabel =
+    sseStatus === "connected"
+      ? "Live"
+      : sseStatus === "reconnecting"
+      ? "Reconnecting..."
+      : "Offline";
 
   if (!publicKey) {
     return (
@@ -381,6 +470,10 @@ export default function Dashboard() {
             StellarPay
           </div>
           <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5 text-xs text-silver-blue">
+              <span className={`w-2 h-2 rounded-full inline-block ${sseColor}`} />
+              <span className="hidden sm:inline">{sseLabel}</span>
+            </div>
             <span className="text-sm text-silver-blue hidden md:inline">
               {user?.primaryEmailAddress?.emailAddress}
             </span>
@@ -404,6 +497,12 @@ export default function Dashboard() {
                     {truncateKey(publicKey)}
                   </span>
                 </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-silver-blue text-sm">Balance</span>
+                <span className="text-sm font-mono font-medium text-near-black">
+                  {balance !== null ? `${balance} XLM` : "—"}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-silver-blue text-sm">Network</span>
@@ -458,6 +557,8 @@ export default function Dashboard() {
             className={`mb-4 p-3.5 rounded-lg text-sm flex items-start gap-2.5 border ${
               txStatus.status === "pending"
                 ? "bg-blue-50 border-blue-200 text-blue-700"
+                : txStatus.status === "confirming"
+                ? "bg-yellow-50 border-yellow-200 text-yellow-800"
                 : txStatus.status === "success"
                 ? "bg-green/10 border-green/30 text-green-dark"
                 : "bg-error-bg border-error/20 text-error"
@@ -466,6 +567,8 @@ export default function Dashboard() {
             <span className="shrink-0 text-lg leading-none mt-px">
               {txStatus.status === "pending"
                 ? "⏳"
+                : txStatus.status === "confirming"
+                ? "⏳"
                 : txStatus.status === "success"
                 ? "✓"
                 : "✕"}
@@ -473,7 +576,9 @@ export default function Dashboard() {
             <div className="flex flex-col gap-1">
               <div className="font-semibold">
                 {txStatus.status === "pending"
-                  ? "Transaction pending..."
+                  ? "Submitting transaction..."
+                  : txStatus.status === "confirming"
+                  ? "Confirming on ledger..."
                   : txStatus.status === "success"
                   ? "Transaction complete"
                   : "Transaction failed"}
@@ -520,9 +625,13 @@ export default function Dashboard() {
                   <div className="font-ui text-xs font-bold uppercase tracking-[0.04em] text-cool-gray mb-1">
                     Live Poll
                   </div>
-                  <h2 className="font-display text-xl font-bold text-near-black">
-                    {poll.question}
-                  </h2>
+                  {pollLoading ? (
+                    <div className="h-6 w-48 bg-gray-100 rounded animate-pulse" />
+                  ) : (
+                    <h2 className="font-display text-xl font-bold text-near-black">
+                      {poll.question}
+                    </h2>
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   <span
@@ -540,39 +649,50 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2.5">
-                {poll.options.map((option, index) => {
-                  const votes = pollResults[index] || 0;
-                  const pct = totalVotes > 0 ? (votes / totalVotes) * 100 : 0;
-                  return (
-                    <button
-                      key={index}
-                      className={`w-full text-left p-3.5 rounded-[10px] border transition-all duration-150 cursor-pointer ${
-                        alreadyVoted
-                          ? "bg-gray-50 border-border-gray cursor-default"
-                          : "bg-white border-border-gray hover:border-kraken-purple hover:bg-kraken-purple-subtle"
-                      }`}
-                      onClick={() => handleVote(index)}
-                      disabled={alreadyVoted || isVoting || !pollActive}
-                    >
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-sm font-medium text-near-black">
-                          {option}
-                        </span>
-                        <span className="text-xs text-silver-blue font-mono">
-                          {votes} ({pct.toFixed(0)}%)
-                        </span>
-                      </div>
-                      <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-kraken-purple rounded-full transition-all duration-500 ease-out"
-                          style={{ width: `${pct}%` }}
-                        />
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+              {pollLoading ? (
+                <div className="flex flex-col gap-2.5">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="p-3.5 rounded-[10px] border border-border-gray">
+                      <div className="h-4 w-32 bg-gray-100 rounded animate-pulse mb-2" />
+                      <div className="h-2 bg-gray-100 rounded-full animate-pulse" />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2.5">
+                  {poll.options.map((option, index) => {
+                    const votes = pollResults[index] || 0;
+                    const pct = totalVotes > 0 ? (votes / totalVotes) * 100 : 0;
+                    return (
+                      <button
+                        key={index}
+                        className={`w-full text-left p-3.5 rounded-[10px] border transition-all duration-150 cursor-pointer ${
+                          alreadyVoted
+                            ? "bg-gray-50 border-border-gray cursor-default"
+                            : "bg-white border-border-gray hover:border-kraken-purple hover:bg-kraken-purple-subtle"
+                        }`}
+                        onClick={() => handleVote(index)}
+                        disabled={alreadyVoted || isVoting || !pollActive}
+                      >
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-sm font-medium text-near-black">
+                            {option}
+                          </span>
+                          <span className="text-xs text-silver-blue font-mono">
+                            {votes} ({pct.toFixed(0)}%)
+                          </span>
+                        </div>
+                        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-kraken-purple rounded-full transition-all duration-500 ease-out"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
 
               {alreadyVoted && (
                 <p className="text-xs text-silver-blue mt-3 text-center">
@@ -662,9 +782,19 @@ export default function Dashboard() {
 
               {newOptions.map((opt, i) => (
                 <div className="flex flex-col gap-1.5" key={i}>
-                  <label className="text-xs font-medium text-cool-gray uppercase tracking-[0.04em]">
-                    Option {i + 1}
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-medium text-cool-gray uppercase tracking-[0.04em]">
+                      Option {i + 1}
+                    </label>
+                    {newOptions.length > 2 && (
+                      <button
+                        className="text-xs text-error bg-transparent border-none cursor-pointer"
+                        onClick={() => setNewOptions((prev) => prev.filter((_, idx) => idx !== i))}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
                   <input
                     className="px-3.5 py-3 border border-border-gray rounded-[10px] bg-white text-near-black text-sm font-ui outline-none focus:border-kraken-purple"
                     type="text"
@@ -681,6 +811,30 @@ export default function Dashboard() {
               >
                 + Add option
               </button>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-cool-gray uppercase tracking-[0.04em]">
+                  Duration
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    className="px-3.5 py-3 border border-border-gray rounded-[10px] bg-white text-near-black text-sm font-ui outline-none focus:border-kraken-purple w-24"
+                    type="number"
+                    min={1}
+                    max={365}
+                    value={newDeadline}
+                    onChange={(e) => setNewDeadline(Math.max(1, parseInt(e.target.value) || 1))}
+                  />
+                  <select
+                    className="px-3.5 py-3 border border-border-gray rounded-[10px] bg-white text-near-black text-sm font-ui outline-none focus:border-kraken-purple"
+                    value={deadlineUnit}
+                    onChange={(e) => setDeadlineUnit(e.target.value as "days" | "hours")}
+                  >
+                    <option value="days">Days</option>
+                    <option value="hours">Hours</option>
+                  </select>
+                </div>
+              </div>
 
               <button
                 className="inline-flex items-center justify-center gap-1.5 px-5 py-[13px] rounded-[12px] font-ui text-base font-medium cursor-pointer transition-all duration-150 bg-kraken-purple text-white hover:bg-kraken-purple-deep disabled:opacity-50 w-full mt-2"

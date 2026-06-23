@@ -8,9 +8,7 @@ import {
   scValToNative,
   rpc,
   Address,
-  StrKey,
   xdr,
-  Transaction,
 } from "@stellar/stellar-sdk";
 import { signTransaction } from "./wallets";
 import type { PollInfo, PollResults } from "../types";
@@ -25,14 +23,6 @@ const DUMMY_KEY = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI";
 export function truncateKey(key: string): string {
   if (!key) return "";
   return `${key.slice(0, 4)}...${key.slice(-4)}`;
-}
-
-export function isValidContractId(id: string): boolean {
-  try {
-    return StrKey.isValidContract(id);
-  } catch {
-    return id.length > 20;
-  }
 }
 
 async function simulateReadCall(
@@ -88,6 +78,28 @@ async function simulateAndSend(
 
   const errResult = response as any;
   return { hash: "", error: errResult.errorResult || "Transaction failed" };
+}
+
+export async function waitForTxConfirmation(
+  hash: string,
+  maxRetries = 15,
+  intervalMs = 2000
+): Promise<{ status: "confirmed" | "failed"; error?: string }> {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const result = await sorobanServer.getTransaction(hash);
+      if (result.status === "SUCCESS") {
+        return { status: "confirmed" };
+      }
+      if (result.status === "FAILED") {
+        return { status: "failed", error: "Transaction failed on ledger" };
+      }
+    } catch {
+      // network error, retry
+    }
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
+  return { status: "failed", error: "Transaction confirmation timed out" };
 }
 
 export async function createPoll(
@@ -220,6 +232,23 @@ export async function hasVoted(
     return result === true;
   } catch {
     return false;
+  }
+}
+
+export async function fetchBalance(
+  publicKey: string
+): Promise<{ balance: string; isError: boolean }> {
+  try {
+    const account = await server.loadAccount(publicKey);
+    const xlmBalance = account.balances.find(
+      (b: any) => b.asset_type === "native"
+    );
+    return {
+      balance: xlmBalance ? xlmBalance.balance : "0",
+      isError: false,
+    };
+  } catch {
+    return { balance: "0", isError: true };
   }
 }
 
