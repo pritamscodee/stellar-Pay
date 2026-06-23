@@ -1,8 +1,5 @@
 use axum::{
-    extract::{
-        ws::{Message, WebSocket, WebSocketUpgrade},
-        Query, State,
-    },
+    extract::{Query, State},
     http::StatusCode,
     response::{sse::Event, IntoResponse, Sse},
     routing::get,
@@ -10,11 +7,7 @@ use axum::{
 };
 use futures::stream::Stream;
 use serde::{Deserialize, Serialize};
-use std::{
-    collections::HashMap,
-    sync::Arc,
-    time::Duration,
-};
+use std::{sync::Arc, time::Duration};
 use tokio::sync::broadcast;
 use tower_http::cors::CorsLayer;
 use tracing_subscriber;
@@ -64,9 +57,10 @@ async fn main() {
         .layer(CorsLayer::permissive())
         .with_state(state);
 
-    let addr = "0.0.0.0:3001";
+    let port = std::env::var("PORT").unwrap_or_else(|_| "3001".to_string());
+    let addr = format!("0.0.0.0:{port}");
     tracing::info!("listening on {}", addr);
-    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 
@@ -76,8 +70,8 @@ async fn health() -> impl IntoResponse {
 
 async fn sse_handler(
     State(state): State<Arc<AppState>>,
-) -> Sse<impl Stream<Item = Result<Event, axum::response::sse::Error>>> {
-    let rx = state.tx.subscribe();
+) -> Sse<impl Stream<Item = Result<Event, std::convert::Infallible>>> {
+    let mut rx = state.tx.subscribe();
 
     let stream = async_stream::stream! {
         loop {
