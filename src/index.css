@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-kraken-purple: #7132f5;
+  --color-kraken-purple-dark: #5741d8;
+  --color-kraken-purple-deep: #5b1ecf;
+  --color-kraken-purple-subtle: rgba(133, 91, 251, 0.16);
+  --color-near-black: #101114;
+  --color-cool-gray: #686b82;
+  --color-silver-blue: #9497a9;
+  --color-border-gray: #dedee5;
+  --color-green: #149e61;
+  --color-green-dark: #026b3f;
+  --color-error: #b91c1c;
+  --color-error-bg: rgba(216, 58, 58, 0.08);
+  --color-surface: #ffffff;
+
+  --font-display: "Kraken-Brand", "IBM Plex Sans", Helvetica, Arial, sans-serif;
+  --font-ui: "Kraken-Product", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", "Fira Code", monospace;
+
+  --radius-btn: 12px;
+  --radius-card: 12px;
+  --radius-input: 10px;
+  --radius-badge: 6px;
+
+  --shadow-card: rgba(0, 0, 0, 0.03) 0px 4px 24px;
+  --shadow-micro: rgba(16, 24, 40, 0.04) 0px 1px 4px;
+}
+
+body {
+  font-family: var(--font-ui);
+  background: #f8f9fc;
+  color: var(--color-near-black);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
