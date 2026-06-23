@@ -45,16 +45,11 @@ npm run build
 
 ## Screenshots
 
-Add screenshots to a `screenshots/` folder in the repo root.
-
-| Screen | Description |
-|--------|-------------|
-| `1-landing.png` | Landing page with sign-in/sign-up |
-| `2-dashboard.png` | Dashboard after authentication |
-| `3-wallet-connected.png` | Wallet connected state with address and network badge |
-| `4-balance-displayed.png` | Balance displayed with XLM amount |
-| `5-transaction-success.png` | Successful transaction with hash and explorer link |
-| `6-transaction-error.png` | Transaction failure feedback |
+| Screen | Preview |
+|--------|---------|
+| **Landing Page** — Sign-in/sign-up with blockchain visuals | ![Landing Page](screenshots/landing-page.jpg) |
+| **Balance Displayed** — XLM balance with auto-refresh | ![Balance](screenshots/balance-displayed.jpg) |
+| **Wallet Connected** — Address, network badge, disconnect | ![Wallet Connected](screenshots/wallet-connected.jpg) |
 
 ## Tech Stack
 
