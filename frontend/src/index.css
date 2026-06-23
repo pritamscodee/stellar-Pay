@@ -14,6 +14,7 @@
   --color-error: #b91c1c;
   --color-error-bg: rgba(216, 58, 58, 0.08);
   --color-surface: #ffffff;
+  --color-app-bg: #f8f9fc;
 
   --font-display: "Kraken-Brand", "IBM Plex Sans", Helvetica, Arial, sans-serif;
   --font-ui: "Kraken-Product", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -28,13 +29,66 @@
   --shadow-micro: rgba(16, 24, 40, 0.04) 0px 1px 4px;
 }
 
+.dark {
+  --color-kraken-purple: #8b5cf6;
+  --color-kraken-purple-dark: #7c3aed;
+  --color-kraken-purple-deep: #6d28d9;
+  --color-kraken-purple-subtle: rgba(139, 92, 246, 0.15);
+  --color-near-black: #e8e8ed;
+  --color-cool-gray: #8e90a2;
+  --color-silver-blue: #6b6d80;
+  --color-border-gray: #2a2a3a;
+  --color-green: #22c55e;
+  --color-green-dark: #4ade80;
+  --color-error: #ef4444;
+  --color-error-bg: rgba(239, 68, 68, 0.1);
+  --color-surface: #13131e;
+  --color-app-bg: #0a0a12;
+
+  --shadow-card: rgba(0, 0, 0, 0.4) 0px 4px 24px;
+  --shadow-micro: rgba(0, 0, 0, 0.3) 0px 1px 4px;
+}
+
+.dark .bg-gray-50 {
+  background-color: #1c1c2e;
+}
+
+.dark .bg-blue-50 {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+.dark .bg-yellow-50 {
+  background-color: rgba(234, 179, 8, 0.1);
+  border-color: rgba(234, 179, 8, 0.2);
+  color: #fde68a;
+}
+
+.dark .text-blue-700 {
+  color: #93c5fd;
+}
+
+.dark .text-yellow-800 {
+  color: #fde68a;
+}
+
+.dark .border-blue-200 {
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.dark .border-yellow-200 {
+  border-color: rgba(234, 179, 8, 0.2);
+}
+
 body {
   font-family: var(--font-ui);
-  background: #f8f9fc;
+  background: var(--color-app-bg);
   color: var(--color-near-black);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 #root {
@@ -48,8 +102,17 @@ body {
   color: var(--color-near-black);
 }
 
+.dark ::selection {
+  background: rgba(139, 92, 246, 0.25);
+}
+
 input::placeholder,
 textarea::placeholder {
   color: #b0b2be;
   font-weight: 400;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #5a5c6e;
 }
