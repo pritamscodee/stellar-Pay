@@ -21,12 +21,12 @@ Multi-wallet Stellar dApp with a deployed Soroban smart contract and real-time e
 ## Setup
 
 ```bash
-# Install dependencies
+cd frontend
 npm install
-
-# Start development server
 npm run dev
 ```
+
+**Netlify:** `netlify.toml` is in `frontend/` — set **Base directory** to `frontend` in Netlify dashboard.
 
 ## Smart Contract
 
