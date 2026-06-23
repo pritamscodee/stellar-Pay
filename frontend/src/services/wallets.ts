@@ -1,6 +1,6 @@
 import { StellarWalletsKit } from "@creit.tech/stellar-wallets-kit/sdk";
 import { defaultModules } from "@creit.tech/stellar-wallets-kit/modules/utils";
-import { type KitEventType } from "@creit.tech/stellar-wallets-kit/types";
+import { KitEventType } from "@creit.tech/stellar-wallets-kit/types";
 
 let initialized = false;
 
@@ -63,7 +63,7 @@ export async function disconnectWallet() {
 }
 
 export function onWalletChange(callback: (address: string | null) => void) {
-  return StellarWalletsKit.on("state_updated" as any, (event: any) => {
+  return StellarWalletsKit.on(KitEventType.STATE_UPDATED, (event) => {
     callback(event.payload?.address || null);
   });
 }
