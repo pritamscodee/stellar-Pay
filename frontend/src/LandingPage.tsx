@@ -72,7 +72,7 @@ export default function LandingPage() {
               className="w-full h-full object-cover"
               loading="eager"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/80" />
+            <div className="absolute inset-0 hero-gradient" />
           </div>
           <div className="relative max-w-6xl mx-auto px-6 pt-28 pb-32 md:pt-36 md:pb-40">
             <div className="max-w-2xl">

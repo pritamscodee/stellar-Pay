@@ -97,6 +97,14 @@
   border-color: rgba(234, 179, 8, 0.2);
 }
 
+.hero-gradient {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.35), transparent);
+}
+
+.dark .hero-gradient {
+  background: linear-gradient(to right, rgba(10, 10, 18, 0.9), rgba(10, 10, 18, 0.4), transparent);
+}
+
 body {
   font-family: var(--font-ui);
   background: var(--color-app-bg);
