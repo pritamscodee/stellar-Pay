@@ -1,11 +1,12 @@
 #![no_std]
-use soroban_sdk::{
-    contract, contractimpl, contractimport, contracttype, vec, Address, Env, String, Vec,
-};
+use soroban_sdk::{contract, contractimpl, contracttype, Address, Env};
 
-// Import the poll contract interface for cross-contract calls
-#[contractimport("../poll/target/wasm32v1-none/release/stellar_poll.wasm")]
-pub struct PollContract;
+mod poll_import {
+    use soroban_sdk::String as SorobanString;
+    soroban_sdk::contractimport!(file = "../poll/target/wasm32v1-none/release/stellar_poll.wasm");
+}
+
+use poll_import::Client;
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -37,7 +38,7 @@ impl RewardContract {
     pub fn claim_reward(env: Env, voter: Address, poll_address: Address) {
         voter.require_auth();
 
-        let poll_client = PollContractClient::new(&env, &poll_address);
+        let poll_client = Client::new(&env, &poll_address);
         let has_voted = poll_client.has_voted(&voter);
 
         if !has_voted {
@@ -95,12 +96,12 @@ mod tests {
         testutils::{Address as _, Ledger, LedgerInfo, Register},
         vec, Address, Env, String,
     };
-    use crate::RewardContract;
 
-    fn setup_poll(env: &Env) -> (Address, crate::PollContractClient) {
+    fn deploy_poll(env: &Env) -> (Address, crate::poll_import::Client) {
         let owner = Address::generate(env);
-        let poll_id = crate::PollContract.register(env, None, ());
-        let poll_client = crate::PollContractClient::new(env, &poll_id);
+        #[allow(deprecated)]
+        let poll_id = env.register_contract_wasm(None::<&Address>, crate::poll_import::WASM);
+        let poll_client = crate::poll_import::Client::new(env, &poll_id);
 
         let question = String::from_str(env, "Best blockchain?");
         let options = vec![
@@ -111,6 +112,13 @@ mod tests {
         poll_client.initialize(&owner, &question, &options, &5000);
 
         (poll_id, poll_client)
+    }
+
+    fn deploy_reward(env: &Env) -> (Address, crate::RewardContractClient) {
+        let reward_id = crate::RewardContract.register(env, None, ());
+        let reward_client = crate::RewardContractClient::new(env, &reward_id);
+        reward_client.initialize();
+        (reward_id, reward_client)
     }
 
     #[test]
@@ -129,15 +137,12 @@ mod tests {
             max_entry_ttl: 6312000,
         });
 
-        let (poll_id, poll_client) = setup_poll(&env);
+        let (poll_id, poll_client) = deploy_poll(&env);
         let voter = Address::generate(&env);
 
         poll_client.vote(&voter, &0);
 
-        let reward_id = RewardContract.register(&env, None, ());
-        let reward_client = crate::RewardContractClient::new(&env, &reward_id);
-
-        reward_client.initialize();
+        let (_, reward_client) = deploy_reward(&env);
         reward_client.claim_reward(&voter, &poll_id);
 
         let reward = reward_client.get_reward(&voter);
@@ -162,13 +167,10 @@ mod tests {
             max_entry_ttl: 6312000,
         });
 
-        let (poll_id, _) = setup_poll(&env);
+        let (poll_id, _) = deploy_poll(&env);
         let voter = Address::generate(&env);
 
-        let reward_id = RewardContract.register(&env, None, ());
-        let reward_client = crate::RewardContractClient::new(&env, &reward_id);
-
-        reward_client.initialize();
+        let (_, reward_client) = deploy_reward(&env);
         reward_client.claim_reward(&voter, &poll_id);
     }
 
@@ -188,17 +190,14 @@ mod tests {
             max_entry_ttl: 6312000,
         });
 
-        let (poll_id, poll_client) = setup_poll(&env);
+        let (poll_id, poll_client) = deploy_poll(&env);
         let voter_a = Address::generate(&env);
         let voter_b = Address::generate(&env);
 
         poll_client.vote(&voter_a, &0);
         poll_client.vote(&voter_b, &1);
 
-        let reward_id = RewardContract.register(&env, None, ());
-        let reward_client = crate::RewardContractClient::new(&env, &reward_id);
-
-        reward_client.initialize();
+        let (_, reward_client) = deploy_reward(&env);
         reward_client.claim_reward(&voter_a, &poll_id);
         reward_client.claim_reward(&voter_b, &poll_id);
 
