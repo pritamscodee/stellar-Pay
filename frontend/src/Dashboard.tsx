@@ -314,7 +314,7 @@ export default function Dashboard() {
       <div className="min-h-screen bg-app-bg flex flex-col">
         <header className="bg-white border-b border-border-gray">
           <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <button onClick={() => signOut({ redirectUrl: "/" })} className="flex items-center gap-2.5 font-display text-[22px] font-bold tracking-[-0.5px] text-near-black cursor-pointer bg-transparent border-none text-left">
+            <button onClick={async () => { await signOut(); window.location.href = "/"; }} className="flex items-center gap-2.5 font-display text-[22px] font-bold tracking-[-0.5px] text-near-black cursor-pointer bg-transparent border-none text-left">
               <div className="w-8 h-8 bg-kraken-purple rounded-lg flex items-center justify-center text-white text-base shrink-0">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
