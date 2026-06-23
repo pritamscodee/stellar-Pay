@@ -58,32 +58,65 @@ export default function LandingPage() {
 
       <main className="flex-1">
         <section className="max-w-[1024px] mx-auto px-6 pt-24 pb-20 md:pt-32 md:pb-28">
-          <div className="max-w-[640px]">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[8px] text-xs font-medium bg-kraken-purple-subtle text-kraken-purple mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-kraken-purple" />
-              Stellar Testnet
+          <div className="flex flex-col md:flex-row md:items-center gap-10 md:gap-16">
+            <div className="flex-1 max-w-[540px]">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[8px] text-xs font-medium bg-kraken-purple-subtle text-kraken-purple mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-kraken-purple" />
+                Stellar Testnet
+              </div>
+              <h1 className="font-display text-[48px] md:text-[56px] font-bold tracking-[-1px] leading-[1.17] text-near-black mb-5">
+                Send XLM on Stellar
+                <span className="text-kraken-purple">.</span>
+              </h1>
+              <p className="text-silver-blue text-[18px] leading-relaxed max-w-[520px] mb-8">
+                A simple, secure payment dApp powered by the Stellar network. Connect your Freighter wallet and start transacting on testnet in seconds.
+              </p>
+              <div className="flex items-center gap-3">
+                <SignUpButton mode="modal">
+                  <button className="inline-flex items-center justify-center gap-2 px-6 py-[13px] rounded-[12px] font-ui text-base font-medium cursor-pointer transition-all duration-150 bg-kraken-purple text-white hover:bg-kraken-purple-deep">
+                    Get Started
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </button>
+                </SignUpButton>
+                <SignInButton mode="modal">
+                  <button className="inline-flex items-center justify-center px-6 py-[13px] rounded-[12px] font-ui text-base font-medium cursor-pointer transition-all duration-150 bg-white text-near-black border border-border-gray hover:bg-gray-50 shadow-card">
+                    Sign In
+                  </button>
+                </SignInButton>
+              </div>
             </div>
-            <h1 className="font-display text-[48px] md:text-[56px] font-bold tracking-[-1px] leading-[1.17] text-near-black mb-5">
-              Send XLM on Stellar
-              <span className="text-kraken-purple">.</span>
-            </h1>
-            <p className="text-silver-blue text-[18px] leading-relaxed max-w-[520px] mb-8">
-              A simple, secure payment dApp powered by the Stellar network. Connect your Freighter wallet and start transacting on testnet in seconds.
-            </p>
-            <div className="flex items-center gap-3">
-              <SignUpButton mode="modal">
-                <button className="inline-flex items-center justify-center gap-2 px-6 py-[13px] rounded-[12px] font-ui text-base font-medium cursor-pointer transition-all duration-150 bg-kraken-purple text-white hover:bg-kraken-purple-deep">
-                  Get Started
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
-                </button>
-              </SignUpButton>
-              <SignInButton mode="modal">
-                <button className="inline-flex items-center justify-center px-6 py-[13px] rounded-[12px] font-ui text-base font-medium cursor-pointer transition-all duration-150 bg-white text-near-black border border-border-gray hover:bg-gray-50 shadow-card">
-                  Sign In
-                </button>
-              </SignInButton>
+            <div className="flex-1 h-[300px] md:h-[450px] rounded-2xl overflow-hidden">
+              <img
+                src="https://plus.unsplash.com/premium_photo-1681400678259-255b10890b08?fm=jpg&q=80&w=1200&auto=format&fit=crop"
+                alt="Blockchain technology concept"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-border-gray">
+          <div className="max-w-[1024px] mx-auto px-6 py-16 md:py-20">
+            <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+              <div className="rounded-2xl overflow-hidden h-[240px] md:h-[320px]">
+                <img
+                  src="https://plus.unsplash.com/premium_photo-1764691405953-0430c2df0c59?fm=jpg&q=80&w=800&auto=format&fit=crop"
+                  alt="Digital blockchain concept"
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+              <div className="rounded-2xl overflow-hidden h-[240px] md:h-[320px]">
+                <img
+                  src="https://plus.unsplash.com/premium_photo-1682310056521-cc7357fc72cf?fm=jpg&q=80&w=800&auto=format&fit=crop"
+                  alt="Blockchain technology connecting cubes"
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
             </div>
           </div>
         </section>
