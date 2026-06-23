@@ -1,6 +1,7 @@
 <div align="center">
 
 # ⚡ StellarPay
+<img width="1905" height="872" alt="asli landign" src="https://github.com/user-attachments/assets/cf0901f4-d87e-4821-9709-1fa856f3c37d" />
 
 ### Multi-Wallet Stellar dApp × Soroban Smart Contract × Real-Time SSE Events
 
