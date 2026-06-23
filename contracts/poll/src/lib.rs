@@ -119,3 +119,120 @@ impl PollContract {
             .unwrap_or(false)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use soroban_sdk::{
+        testutils::{Address as _, Ledger, LedgerInfo, Register},
+        vec, Env, Address, String,
+    };
+    use crate::PollContract;
+
+    fn setup() -> (Env, Address, crate::PollContractClient<'static>) {
+        let env = Env::default();
+        let owner = Address::generate(&env);
+        let contract_id = PollContract.register(&env, None, ());
+        let client = crate::PollContractClient::new(&env, &contract_id);
+
+        Ledger::set(&env.ledger(), LedgerInfo {
+            timestamp: 1000,
+            protocol_version: 27,
+            sequence_number: 0,
+            network_id: [0; 32],
+            base_reserve: 10,
+            min_persistent_entry_ttl: 4096,
+            min_temp_entry_ttl: 16,
+            max_entry_ttl: 6312000,
+        });
+
+        env.mock_all_auths();
+
+        (env, owner, client)
+    }
+
+    #[test]
+    fn test_initialize_poll() {
+        let (env, owner, client) = setup();
+
+        let question = String::from_str(&env, "Best blockchain?");
+        let options = vec![
+            &env,
+            String::from_str(&env, "Stellar"),
+            String::from_str(&env, "Ethereum"),
+        ];
+
+        client.initialize(&owner, &question, &options, &5000);
+
+        let poll = client.get_poll();
+        assert_eq!(poll.question, question);
+        assert_eq!(poll.options.len(), 2);
+        assert_eq!(poll.total_votes, 0);
+    }
+
+    #[test]
+    fn test_cast_vote() {
+        let (env, owner, client) = setup();
+
+        let question = String::from_str(&env, "Best blockchain?");
+        let options = vec![
+            &env,
+            String::from_str(&env, "Stellar"),
+            String::from_str(&env, "Ethereum"),
+        ];
+        client.initialize(&owner, &question, &options, &5000);
+
+        let voter = Address::generate(&env);
+        client.vote(&voter, &0);
+
+        assert!(client.has_voted(&voter));
+        let results = client.get_results(&2);
+        assert_eq!(results.get(0).unwrap(), 1);
+        assert_eq!(results.get(1).unwrap(), 0);
+    }
+
+    #[test]
+    #[should_panic(expected = "already voted")]
+    fn test_double_vote_rejected() {
+        let (env, owner, client) = setup();
+
+        let question = String::from_str(&env, "Best blockchain?");
+        let options = vec![
+            &env,
+            String::from_str(&env, "Stellar"),
+            String::from_str(&env, "Ethereum"),
+        ];
+        client.initialize(&owner, &question, &options, &5000);
+
+        let voter = Address::generate(&env);
+        client.vote(&voter, &0);
+        client.vote(&voter, &1);
+    }
+
+    #[test]
+    #[should_panic(expected = "voting has ended")]
+    fn test_vote_after_deadline_rejected() {
+        let (env, owner, client) = setup();
+
+        let question = String::from_str(&env, "Best blockchain?");
+        let options = vec![
+            &env,
+            String::from_str(&env, "Stellar"),
+            String::from_str(&env, "Ethereum"),
+        ];
+        client.initialize(&owner, &question, &options, &2000);
+
+        Ledger::set(&env.ledger(), LedgerInfo {
+            timestamp: 3000,
+            protocol_version: 27,
+            sequence_number: 0,
+            network_id: [0; 32],
+            base_reserve: 10,
+            min_persistent_entry_ttl: 4096,
+            min_temp_entry_ttl: 16,
+            max_entry_ttl: 6312000,
+        });
+
+        let voter = Address::generate(&env);
+        client.vote(&voter, &0);
+    }
+}

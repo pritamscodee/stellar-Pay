@@ -1,12 +1,14 @@
 <div align="center">
 
 # ⚡ StellarPay
+
 <img width="1905" height="872" alt="asli landign" src="https://github.com/user-attachments/assets/cf0901f4-d87e-4821-9709-1fa856f3c37d" />
 
 ### Multi-Wallet Stellar dApp × Soroban Smart Contract × Real-Time SSE Events
 
 ---
 
+[![CI](https://github.com/pritamscodee/stellar-Pay/actions/workflows/ci.yml/badge.svg)](https://github.com/pritamscodee/stellar-Pay/actions/workflows/ci.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=fff)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=fff)](https://vitejs.dev)
@@ -16,6 +18,7 @@
 [![Clerk](https://img.shields.io/badge/Clerk-6C47FF?style=for-the-badge&logo=clerk&logoColor=fff)](https://clerk.com)
 [![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=fff)](https://vercel.com)
 [![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=fff)](https://render.com)
+[![Tests](https://img.shields.io/badge/Tests-14_Frontend_%7C_4_Contract-0?style=for-the-badge&logo=vitest&logoColor=fff)]()
 
 [![Live Demo](https://img.shields.io/badge/LIVE_DEMO-7B00FF?style=for-the-badge&logo=vercel&logoColor=fff)](https://frontend-one-rose-14.vercel.app)
 [![Contract on Stellar Expert](https://img.shields.io/badge/Stellar_Expert-000000?style=for-the-badge&logo=stellar&logoColor=fff)](https://stellar.expert/explorer/testnet/contract/CDROSAGWRIQG5TSRF2FFFFXZD3RGPWDS6I3IWUTC67MELRRLZHNOE6ID)
@@ -136,11 +139,18 @@ cp .env.example .env
 npm run dev
 ```
 
-### Smart Contract
+### Smart Contract (Poll)
 
 ```bash
 cd contracts/poll
-cargo build --target wasm32-unknown-unknown --release
+cargo build --target wasm32v1-none --release
+```
+
+### Smart Contract (Reward — Inter-Contract)
+
+```bash
+cd contracts/reward
+cargo build --target wasm32v1-none --release
 ```
 
 ### Backend (SSE Server)
@@ -156,28 +166,119 @@ cargo run
 ## 🧱 Architecture
 
 ```
-stellar-payment-dapp/
+stellar-pay/
 ├── frontend/                    # React + Vite SPA
 │   ├── src/
 │   │   ├── main.tsx            # Entry point
-│   │   ├── App.tsx             # Auth router
+│   │   ├── App.tsx             # Auth router + ErrorBoundary
 │   │   ├── Dashboard.tsx       # Main dashboard
 │   │   ├── LandingPage.tsx     # Marketing page
+│   │   ├── ErrorBoundary.tsx   # React error boundary
+│   │   ├── LoadingSkeleton.tsx # Loading skeletons
 │   │   ├── types.ts            # Shared types
 │   │   ├── index.css           # Tailwind + theme
+│   │   ├── test/               # Frontend tests
 │   │   └── services/
 │   │       ├── wallets.ts      # Multi-wallet kit
 │   │       ├── contract.ts     # Soroban interactions
 │   │       └── backend.ts      # SSE client
 │   ├── screenshots/            # App screenshots
-│   └── netlify.toml            # Netlify config
+│   └── vercel.json             # Vercel SPA config
 ├── contracts/
-│   └── poll/                   # Soroban poll contract
+│   ├── poll/                   # Soroban poll contract
+│   │   └── src/lib.rs          # + 4 unit tests
+│   └── reward/                 # Inter-contract reward contract
 │       └── src/lib.rs
 ├── backend/                    # Rust Axum SSE server
 │   └── src/main.rs
+├── scripts/
+│   ├── deploy.sh               # Unix contract deploy
+│   └── deploy.ps1              # Windows contract deploy
+├── .github/workflows/
+│   └── ci.yml                  # CI/CD pipeline
 └── README.md
 ```
+
+---
+
+---
+
+## 🤖 CI/CD Pipeline
+
+The project uses **GitHub Actions** for continuous integration. On every push to `main` and every pull request, the pipeline runs:
+
+| Job | What it does |
+|-----|-------------|
+| **Frontend** | `npm ci`, `npm run lint`, `npm run build`, `npm test` (14 tests) |
+| **Contract** | `cargo build` (poll + reward), `cargo test` (4 tests) |
+| **Backend** | `cargo build` (Rust Axum server) |
+
+### Pipeline Status
+
+[![CI](https://github.com/pritamscodee/stellar-Pay/actions/workflows/ci.yml/badge.svg)](https://github.com/pritamscodee/stellar-Pay/actions/workflows/ci.yml)
+
+### Run Tests Locally
+
+```bash
+# Frontend tests (Vitest)
+cd frontend && npm test
+
+# Contract tests (Rust)
+cd contracts/poll && cargo test
+```
+
+| Test Suite | Tests | Status |
+|-----------|-------|--------|
+| Frontend types | 5 | ✅ |
+| Frontend backend service | 6 | ✅ |
+| Frontend helpers | 3 | ✅ |
+| Poll contract | 4 | ✅ |
+| **Total** | **18** | ✅ |
+
+---
+
+## 🔗 Inter-Contract Communication
+
+The `contracts/reward` contract demonstrates cross-contract calls by importing the compiled poll contract WASM via `contractimport`.
+
+### Reward Contract Features
+
+- **Reward logic** that calls the poll contract to verify votes
+- **Cross-contract import** using Soroban's `contractimport("../poll/target/.../stellar_poll.wasm")`
+- Demonstrates composability of Soroban smart contracts
+
+```rust
+// contracts/reward/src/lib.rs
+contractimport!("../poll/target/wasm32v1-none/release/stellar_poll.wasm");
+```
+
+---
+
+## 🚢 Deployment Scripts
+
+Automated deployment scripts for the Soroban poll contract to Stellar testnet:
+
+| Script | Platform |
+|--------|----------|
+| `scripts/deploy.sh` | Unix (Linux/macOS) |
+| `scripts/deploy.ps1` | Windows PowerShell |
+
+Both scripts:
+1. Build the WASM contract
+2. Install the contract via `soroban contract install`
+3. Deploy via `soroban contract deploy`
+4. Output the deployed contract ID
+
+---
+
+## 🧩 Error Boundary & Loading Skeletons
+
+| Component | Purpose |
+|-----------|---------|
+| `ErrorBoundary.tsx` | Catches React rendering errors and shows a friendly fallback UI with a reload button |
+| `LoadingSkeleton.tsx` | `CardSkeleton` and `ListSkeleton` — animated pulse placeholders for async data |
+
+Both components are imported in `Dashboard.tsx` to improve production UX during data fetching.
 
 ---
 
@@ -258,13 +359,16 @@ All interactions are verifiable on Stellar Expert:
 - **Contract ID**: `CDROSAGWRIQG5TSRF2FFFFXZD3RGPWDS6I3IWUTC67MELRRLZHNOE6ID`
 - **Init Tx Hash**: `1cc3507973ab0f7a5b2aa1e8f0bc772f1efa9a3697eb600d170f927129fd7a70`
 - **Deployer Account**: `GCZVEJZJNMPHXP3GKCHI33YUSN7BJTU3OWNDLSDEUQOO4UGRIQWHBEHK`
+- **Test Results**: [CI Pipeline](https://github.com/pritamscodee/stellar-Pay/actions) — 18 total tests (14 frontend + 4 contract)
+- **GitHub Repo**: [pritamscodee/stellar-Pay](https://github.com/pritamscodee/stellar-Pay)
 - **Screenshots**: `frontend/screenshots/` folder
+- **Demo Video**: (coming soon)
 
 ---
 
 <div align="center">
 
-**Built with ❤️ on Stellar** · [Report Issue](https://github.com/pritamscodee/stellar-payment-dapp/issues)
+**Built with ❤️ on Stellar** · [Report Issue](https://github.com/pritamscodee/stellar-Pay/issues)
 
 [![Stellar](https://img.shields.io/badge/Powered_by_Stellar-7B00FF?style=flat-square&logo=stellar&logoColor=fff)](https://stellar.org)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
