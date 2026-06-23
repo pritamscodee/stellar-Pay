@@ -1,8 +1,27 @@
-# StellarPay - Stellar dApp (Level 2)
+# StellarPay — Stellar dApp
 
-Multi-wallet Stellar dApp with a deployed Soroban smart contract and real-time event integration.
+## Level 1 — Basic Stellar dApp
 
-## Features
+Multi-wallet Stellar application with Clerk authentication.
+
+### Features (Level 1)
+
+- **Clerk Authentication**: Sign up/in with email, Google, GitHub, etc.
+- **Multi-Wallet Support**: Connect via Freighter, Albedo, Lobstr, xBull, Rabet, or Hana using StellarWalletsKit
+- **Transaction Status Tracking**: Pending → Success/Fail with explorer links
+- **Error Handling**: 3 error types — wallet not found, connection rejected, insufficient balance
+
+### Screenshot (Level 1)
+
+![dapp-success2](frontend/screenshots/dapp-success2.jpg)
+
+---
+
+## Level 2 — Soroban Contract + Real-Time Events
+
+Extends Level 1 with a deployed Soroban smart contract and real-time event integration.
+
+### Features (Level 2)
 
 - **Multi-Wallet Support**: Connect via Freighter, Albedo, Lobstr, xBull, Rabet, or Hana using StellarWalletsKit
 - **Soroban Smart Contract**: Live Poll voting contract deployed on Stellar testnet
@@ -11,14 +30,14 @@ Multi-wallet Stellar dApp with a deployed Soroban smart contract and real-time e
 - **Error Handling**: 3 error types — wallet not found, connection rejected, insufficient balance
 - **Clerk Authentication**: Sign up/in with email, Google, GitHub, etc.
 
-## Prerequisites
+### Prerequisites
 
 - A Stellar wallet (Freighter, Albedo, Lobstr, etc.)
 - A Clerk account at [clerk.com](https://clerk.com)
 - Rust toolchain (for building the contract)
 - Node.js 18+
 
-## Setup
+### Setup
 
 ```bash
 cd frontend
@@ -57,20 +76,24 @@ Runs on `http://localhost:3001`. Provides:
 - `GET /api/events` — SSE stream for real-time events
 - `GET /api/publish` — Publish events (used by frontend)
 
-### Deploy to Render
+### Deploy to Shuttle
 
-1. Push the repo to GitHub
-2. In the [Render Dashboard](https://dashboard.render.com), create a **New Web Service**
-3. Connect your GitHub repo
-4. Set:
-   - **Root Directory**: `backend`
-   - **Build Command**: `cargo build --release`
-   - **Start Command**: `./target/release/stellerpay-backend`
-5. Add environment variable: `PORT = 10000`
-6. Deploy
+1. Install the Shuttle CLI:
+   ```bash
+   cargo install cargo-shuttle --locked
+   ```
+2. Login:
+   ```bash
+   cd backend
+   cargo shuttle login
+   ```
+3. Deploy:
+   ```bash
+   cargo shuttle deploy
+   ```
 
-After deployment, copy the Render URL (e.g. `https://stellerpay-backend.onrender.com`)
-and set it as `VITE_BACKEND_URL` in your Netlify environment variables.
+After deployment, Shuttle will give you a URL like `https://stellerpay-backend.shuttle.app`.
+Copy it and set as `VITE_BACKEND_URL` in your Netlify environment variables, then redeploy.
 
 ## Project Structure
 
@@ -110,7 +133,7 @@ Three error types handled:
 - **Contract Address**: `CDROSAGWRIQG5TSRF2FFFFXZD3RGPWDS6I3IWUTC67MELRRLZHNOE6ID`
 - **Init TX Hash**: `1cc3507973ab0f7a5b2aa1e8f0bc772f1efa9a3697eb600d170f927129fd7a70`
 - **Deployer Account**: `GCZVEJZJNMPHXP3GKCHI33YUSN7BJTU3OWNDLSDEUQOO4UGRIQWHBEHK`
-- **Screenshot**: See `screenshots/` folder
+- **Screenshots**: See `frontend/screenshots/` folder
 
 ## Tech Stack
 

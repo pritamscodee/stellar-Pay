@@ -10,7 +10,6 @@ use serde::{Deserialize, Serialize};
 use std::{sync::Arc, time::Duration};
 use tokio::sync::broadcast;
 use tower_http::cors::CorsLayer;
-use tracing_subscriber;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct VotePayload {
@@ -43,25 +42,19 @@ pub struct AppState {
     pub tx: broadcast::Sender<EventPayload>,
 }
 
-#[tokio::main]
-async fn main() {
-    tracing_subscriber::fmt::init();
-
+#[shuttle_runtime::main]
+async fn main() -> shuttle_axum::ShuttleAxum {
     let (tx, _) = broadcast::channel::<EventPayload>(100);
     let state = Arc::new(AppState { tx });
 
-    let app = Router::new()
+    let router = Router::new()
         .route("/health", get(health))
         .route("/api/events", get(sse_handler))
         .route("/api/publish", get(publish_handler))
         .layer(CorsLayer::permissive())
         .with_state(state);
 
-    let port = std::env::var("PORT").unwrap_or_else(|_| "3001".to_string());
-    let addr = format!("0.0.0.0:{port}");
-    tracing::info!("listening on {}", addr);
-    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    Ok(router.into())
 }
 
 async fn health() -> impl IntoResponse {
