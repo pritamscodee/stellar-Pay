@@ -141,12 +141,12 @@ export default function Dashboard() {
     });
 
     const unsubWallet = onWalletChange((address) => {
-      if (address && address !== publicKey) {
+      if (address) {
         setPublicKey(address);
         setAlreadyVoted(false);
         setTxStatus({ status: "idle" });
         setFeedback({ type: "success", message: "Wallet switched. Refreshing data..." });
-      } else if (!address) {
+      } else {
         setPublicKey(null);
       }
     });
