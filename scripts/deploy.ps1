@@ -1,4 +1,4 @@
-# StellarPay — Soroban Contract Deployment Script (PowerShell)
+# StellarVote — Soroban Contract Deployment Script (PowerShell)
 # Usage:
 #   .\scripts\deploy.ps1 [-Network testnet] [-Identity default]
 
@@ -10,7 +10,7 @@ param(
 $ContractDir = "contracts/poll"
 $Wasm = "$ContractDir/target/wasm32-unknown-unknown/release/stellar_poll.wasm"
 
-Write-Host "🚀 Deploying StellarPay Poll Contract to $Network" -ForegroundColor Cyan
+Write-Host "🚀 Deploying StellarVote Poll Contract to $Network" -ForegroundColor Cyan
 Write-Host "   Identity: $Identity"
 Write-Host ""
 

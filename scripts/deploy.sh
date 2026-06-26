@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ──────────────────────────────────────────────
-# StellarPay — Soroban Contract Deployment Script
+# StellarVote — Soroban Contract Deployment Script
 # ──────────────────────────────────────────────
 # Usage:
 #   ./scripts/deploy.sh <network>
@@ -22,7 +22,7 @@ IDENTITY="${2:-default}"
 CONTRACT_DIR="contracts/poll"
 WASM="$CONTRACT_DIR/target/wasm32-unknown-unknown/release/stellar_poll.wasm"
 
-echo "🚀 Deploying StellarPay Poll Contract to $NETWORK"
+echo "🚀 Deploying StellarVote Poll Contract to $NETWORK"
 echo "   Identity: $IDENTITY"
 echo ""
 

@@ -35,7 +35,7 @@ export default function LandingPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </div>
-            StellarPay
+            StellarVote
           </a>
           <div className="flex items-center gap-2">
             <button
@@ -309,7 +309,7 @@ export default function LandingPage() {
 
       <footer className="border-t border-border-gray bg-surface">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between text-xs text-silver-blue">
-          <span className="font-medium">StellarPay · Soroban dApp</span>
+          <span className="font-medium">StellarVote · Soroban dApp</span>
           <div className="flex gap-5">
             <a href="https://stellar.org" target="_blank" rel="noopener noreferrer" className="text-kraken-purple no-underline hover:underline font-medium">Stellar Network</a>
             <a href="https://freighter.app" target="_blank" rel="noopener noreferrer" className="text-kraken-purple no-underline hover:underline font-medium">Freighter</a>

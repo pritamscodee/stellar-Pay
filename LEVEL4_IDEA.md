@@ -1,4 +1,4 @@
-# StellarPay — Level 4 Idea Submission
+# StellarVote — Level 4 Idea Submission
 
 ## 1. Problem Statement
 
@@ -78,7 +78,7 @@ Data Flow:
   Freelancer withdraws to fiat via anchor off-ramp
 ```
 
-### What We Reuse from Existing StellarPay
+### What We Reuse from Existing StellarVote
 
 | Component | How It Maps |
 |---|---|

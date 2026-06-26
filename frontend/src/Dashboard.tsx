@@ -350,7 +350,7 @@ export default function Dashboard() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </div>
-              StellarPay
+              StellarVote
             </button>
             <div className="flex items-center gap-2">
               <button
@@ -467,7 +467,7 @@ export default function Dashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </div>
-            StellarPay
+            StellarVote
           </div>
           <div className="flex items-center gap-2">
             <button

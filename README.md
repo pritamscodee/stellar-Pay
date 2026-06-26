@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ StellarPay
+# ⚡ StellarVote
 
 <img width="1905" height="872" alt="asli landign" src="https://github.com/user-attachments/assets/cf0901f4-d87e-4821-9709-1fa856f3c37d" />
 
@@ -19,7 +19,7 @@ https://github.com/user-attachments/assets/d522ae39-22ff-4349-8101-aef049919440
 
 ---
 
-[![CI](https://github.com/pritamscodee/stellar-Pay/actions/workflows/ci.yml/badge.svg)](https://github.com/pritamscodee/stellar-Pay/actions/workflows/ci.yml)
+[![CI](https://github.com/pritamscodee/stellar-Vote/actions/workflows/ci.yml/badge.svg)](https://github.com/pritamscodee/stellar-Vote/actions/workflows/ci.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=fff)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=fff)](https://vitejs.dev)
@@ -40,7 +40,7 @@ https://github.com/user-attachments/assets/d522ae39-22ff-4349-8101-aef049919440
 
 ## 🌐 Overview
 
-**StellarPay** is a full-stack Web3 dApp on the **Stellar network** featuring:
+**StellarVote** is a full-stack Web3 dApp on the **Stellar network** featuring:
 
 - **Soroban Smart Contract** — Decentralized poll creation & voting on Stellar testnet
 - **Multi-Wallet Support** — Connect via Freighter, Albedo, Lobstr, xBull, Rabet, or Hana
@@ -197,7 +197,7 @@ cargo run
 ## 🧱 Architecture
 
 ```
-stellar-pay/
+stellar-vote/
 ├── frontend/                    # React + Vite SPA
 │   ├── src/
 │   │   ├── main.tsx            # Entry point
@@ -246,7 +246,7 @@ The project uses **GitHub Actions** for continuous integration. On every push to
 
 ### Pipeline Status
 
-[![CI](https://github.com/pritamscodee/stellar-Pay/actions/workflows/ci.yml/badge.svg)](https://github.com/pritamscodee/stellar-Pay/actions/workflows/ci.yml)
+[![CI](https://github.com/pritamscodee/stellar-Vote/actions/workflows/ci.yml/badge.svg)](https://github.com/pritamscodee/stellar-Vote/actions/workflows/ci.yml)
 
 <div align="center">
   <img src="frontend/screenshots/ci-pipeline.jpg" alt="CI/CD Pipeline" width="90%" />
@@ -397,8 +397,8 @@ All interactions are verifiable on Stellar Expert:
 - **Contract ID**: `CDROSAGWRIQG5TSRF2FFFFXZD3RGPWDS6I3IWUTC67MELRRLZHNOE6ID`
 - **Init Tx Hash**: `1cc3507973ab0f7a5b2aa1e8f0bc772f1efa9a3697eb600d170f927129fd7a70`
 - **Deployer Account**: `GCZVEJZJNMPHXP3GKCHI33YUSN7BJTU3OWNDLSDEUQOO4UGRIQWHBEHK`
-- **Test Results**: [CI Pipeline](https://github.com/pritamscodee/stellar-Pay/actions) — 21 total tests (14 frontend + 4 poll contract + 3 reward contract)
-- **GitHub Repo**: [pritamscodee/stellar-Pay](https://github.com/pritamscodee/stellar-Pay)
+- **Test Results**: [CI Pipeline](https://github.com/pritamscodee/stellar-Vote/actions) — 21 total tests (14 frontend + 4 poll contract + 3 reward contract)
+- **GitHub Repo**: [pritamscodee/stellar-Vote](https://github.com/pritamscodee/stellar-Vote)
 - **Screenshots**: `frontend/screenshots/` folder
 - **Demo Video**: (coming soon)
 
@@ -406,7 +406,7 @@ All interactions are verifiable on Stellar Expert:
 
 <div align="center">
 
-**Built with ❤️ on Stellar** · [Report Issue](https://github.com/pritamscodee/stellar-Pay/issues)
+**Built with ❤️ on Stellar** · [Report Issue](https://github.com/pritamscodee/stellar-Vote/issues)
 
 [![Stellar](https://img.shields.io/badge/Powered_by_Stellar-7B00FF?style=flat-square&logo=stellar&logoColor=fff)](https://stellar.org)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
