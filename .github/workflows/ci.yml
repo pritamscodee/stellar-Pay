@@ -32,6 +32,7 @@ jobs:
   contract-poll:
     name: Contract (Poll) — Build & Test
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     defaults:
       run:
         working-directory: contracts/poll
@@ -41,22 +42,14 @@ jobs:
         with:
           target: wasm32-unknown-unknown
           toolchain: stable
-      - name: Build contract
-        run: |
-          for i in 1 2 3; do
-            cargo build --target wasm32-unknown-unknown --release && break
-            sleep 5
-          done
-      - name: Run tests
-        run: |
-          for i in 1 2 3; do
-            cargo test && break
-            sleep 5
-          done
+      - run: cargo build --target wasm32-unknown-unknown --release
+      - run: cargo test
 
   contract-reward:
     name: Contract (Reward) — Build & Test
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    needs: [contract-poll]
     defaults:
       run:
         working-directory: contracts/reward
@@ -66,29 +59,16 @@ jobs:
         with:
           target: wasm32-unknown-unknown
           toolchain: stable
-      - name: Build poll contract WASM (needed for contractimport)
+      - name: Build poll WASM (needed for contractimport)
         working-directory: contracts/poll
-        run: |
-          for i in 1 2 3; do
-            cargo build --target wasm32-unknown-unknown --release && break
-            sleep 5
-          done
-      - name: Build reward contract
-        run: |
-          for i in 1 2 3; do
-            cargo build --target wasm32-unknown-unknown --release && break
-            sleep 5
-          done
-      - name: Run tests
-        run: |
-          for i in 1 2 3; do
-            cargo test && break
-            sleep 5
-          done
+        run: cargo build --target wasm32-unknown-unknown --release
+      - run: cargo build --target wasm32-unknown-unknown --release
+      - run: cargo test
 
   backend:
     name: Backend — Build
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     defaults:
       run:
         working-directory: backend
@@ -97,9 +77,4 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: stable
-      - name: Build backend
-        run: |
-          for i in 1 2 3; do
-            cargo build --release && break
-            sleep 5
-          done
+      - run: cargo build --release
