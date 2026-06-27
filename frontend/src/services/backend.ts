@@ -1,6 +1,6 @@
 import type { BackendEvent, BackendHealth, SseStatus } from "../types";
 
-export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://stellar-pay-eia0.onrender.com";
+export const BACKEND_URL = "https://stellar-pay-eia0.onrender.com";
 
 export function subscribeToEvents(
   onEvent: (event: BackendEvent) => void,

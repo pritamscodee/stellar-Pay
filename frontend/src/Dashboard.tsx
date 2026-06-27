@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserButton, useUser } from "@clerk/clerk-react";
 import { Toaster, toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -55,7 +54,6 @@ const DEMO_POLL: PollInfo = {
 };
 
 export default function Dashboard() {
-  const { user } = useUser();
   const navigate = useNavigate();
   const { theme, toggle } = useTheme();
   const [publicKey, setPublicKey] = useState<string | null>(null);
@@ -377,10 +375,25 @@ export default function Dashboard() {
                   </svg>
                 )}
               </motion.button>
-              <span className="text-sm text-ink hidden md:inline font-ui">
-                {user?.primaryEmailAddress?.emailAddress}
+              <span className="text-sm text-ink font-mono hidden md:inline font-ui">
+                {publicKey ? `${publicKey.slice(0, 6)}...${publicKey.slice(-4)}` : "Not connected"}
               </span>
-              <UserButton />
+              <div className="relative group">
+                <button className="w-8 h-8 rounded-full bg-primary/10 border border-hairline flex items-center justify-center text-xs font-medium text-ink hover:bg-primary/20 transition-colors cursor-pointer">
+                  {publicKey?.slice(0, 2) || "?"}
+                </button>
+                <div className="absolute right-0 top-full mt-2 w-48 bg-surface-card border border-hairline rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50 py-1">
+                  <div className="px-4 py-2 border-b border-hairline">
+                    <p className="text-sm font-medium text-ink font-mono truncate">{publicKey || "No wallet"}</p>
+                  </div>
+                  <button
+                    onClick={handleDisconnect}
+                    className="w-full text-left px-4 py-2 text-sm text-body hover:text-error hover:bg-error/5 transition-colors cursor-pointer"
+                  >
+                    Disconnect
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </motion.header>
@@ -582,10 +595,25 @@ export default function Dashboard() {
                 </svg>
               )}
             </motion.button>
-            <span className="text-sm text-ink hidden md:inline font-ui">
-              {user?.primaryEmailAddress?.emailAddress}
+            <span className="text-sm text-ink font-mono hidden md:inline font-ui">
+              {publicKey ? `${publicKey.slice(0, 6)}...${publicKey.slice(-4)}` : "Not connected"}
             </span>
-            <UserButton />
+            <div className="relative group">
+              <button className="w-8 h-8 rounded-full bg-primary/10 border border-hairline flex items-center justify-center text-xs font-medium text-ink hover:bg-primary/20 transition-colors cursor-pointer">
+                {publicKey?.slice(0, 2) || "?"}
+              </button>
+              <div className="absolute right-0 top-full mt-2 w-48 bg-surface-card border border-hairline rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50 py-1">
+                <div className="px-4 py-2 border-b border-hairline">
+                  <p className="text-sm font-medium text-ink font-mono truncate">{publicKey || "No wallet"}</p>
+                </div>
+                <button
+                  onClick={handleDisconnect}
+                  className="w-full text-left px-4 py-2 text-sm text-body hover:text-error hover:bg-error/5 transition-colors cursor-pointer"
+                >
+                  Disconnect
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </motion.header>

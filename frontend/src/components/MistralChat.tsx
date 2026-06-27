@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Sparkles, ChevronDown } from "lucide-react";
 import { captureFeedback } from "../services/analytics";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://stellar-pay-eia0.onrender.com";
+const BACKEND_URL = "https://stellar-pay-eia0.onrender.com";
 
 interface ChatMessage {
   role: "user" | "assistant";

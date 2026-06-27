@@ -3,12 +3,10 @@ import { publishVoteEvent, publishPollCreatedEvent } from '../services/backend'
 
 describe('Backend Service', () => {
   beforeEach(() => {
-    vi.stubEnv('VITE_BACKEND_URL', 'https://stellar-pay-eia0.onrender.com')
     globalThis.fetch = vi.fn()
   })
 
   afterEach(() => {
-    vi.unstubAllEnvs()
     vi.restoreAllMocks()
   })
 

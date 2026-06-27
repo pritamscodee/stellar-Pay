@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { SignInButton, SignUpButton, SignedIn, SignedOut } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "./ThemeProvider";
 import { Button } from "@/components/ui/button";
+import { openAuthModal, getAddress, initKit } from "./services/wallets";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import AnimatedTestimonials, { type Testimonial } from "./components/AnimatedTestimonials";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://stellar-pay-eia0.onrender.com";
+const BACKEND_URL = "https://stellar-pay-eia0.onrender.com";
 
 const features = [
   {
@@ -134,6 +134,15 @@ export default function LandingPage() {
   // Tracks whether we're in the retry wait (shows a specific message in the skeleton)
   const [testimonialsRetrying, setTestimonialsRetrying] = useState(false);
 
+  async function connectWallet() {
+    initKit();
+    await openAuthModal();
+    const address = await getAddress();
+    if (address) {
+      navigate("/dashboard");
+    }
+  }
+
   useEffect(() => {
     let cancelled = false;
 
@@ -224,23 +233,9 @@ export default function LandingPage() {
               )}
             </button>
             <div className="hidden md:flex items-center gap-2">
-              <SignedOut>
-                <SignInButton mode="modal">
-                  <Button variant="outline" size="sm">
-                    Sign In
-                  </Button>
-                </SignInButton>
-                <SignUpButton mode="modal">
-                  <Button size="sm">
-                    Get Started
-                  </Button>
-                </SignUpButton>
-              </SignedOut>
-              <SignedIn>
-                <Button size="sm" onClick={() => navigate("/dashboard")}>
-                  Dashboard
-                </Button>
-              </SignedIn>
+              <Button size="sm" onClick={connectWallet}>
+                Connect Wallet
+              </Button>
             </div>
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -259,23 +254,9 @@ export default function LandingPage() {
         </div>
         {mobileOpen && (
           <div className="md:hidden border-t border-hairline bg-canvas px-6 py-4 flex flex-col gap-3">
-            <SignedOut>
-              <SignInButton mode="modal">
-                <Button variant="outline" className="w-full">
-                  Sign In
-                </Button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <Button className="w-full">
-                  Get Started
-                </Button>
-              </SignUpButton>
-            </SignedOut>
-            <SignedIn>
-              <Button className="w-full" onClick={() => navigate("/dashboard")}>
-                Dashboard
-              </Button>
-            </SignedIn>
+            <Button className="w-full" onClick={connectWallet}>
+              Connect Wallet
+            </Button>
           </div>
         )}
       </header>
@@ -302,32 +283,15 @@ export default function LandingPage() {
                   Create polls, cast votes, and track results in real-time — powered by Soroban smart contracts and the Stellar network.
                 </p>
                 <div className="flex items-center gap-3">
-                  <SignedOut>
-                    <SignUpButton mode="modal">
-                      <Button className="gap-2 px-7 py-[13px]">
-                        Launch App
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                        </svg>
-                      </Button>
-                    </SignUpButton>
-                    <SignInButton mode="modal">
-                      <Button variant="outline" className="px-7 py-[13px]">
-                        Sign In
-                      </Button>
-                    </SignInButton>
-                  </SignedOut>
-                  <SignedIn>
-                    <Button
-                      onClick={() => navigate("/dashboard")}
-                      className="gap-2 px-7 py-[13px]"
-                    >
-                      Go to Dashboard
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                      </svg>
-                    </Button>
-                  </SignedIn>
+                  <Button
+                    onClick={connectWallet}
+                    className="gap-2 px-7 py-[13px]"
+                  >
+                    Connect Wallet
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </Button>
                 </div>
               </div>
               <div className="hidden md:block">
@@ -608,29 +572,15 @@ export default function LandingPage() {
               <p className="text-on-primary/80 text-[16px] max-w-[480px] mx-auto mb-8 font-ui">
                 Connect your Stellar wallet and create your first on-chain poll in seconds.
               </p>
-              <SignedOut>
-                <SignUpButton mode="modal">
-                  <Button
-                    className="bg-on-primary text-primary hover:bg-on-primary/90 shadow-sm gap-2 px-8 py-[14px] h-auto text-[15px]"
-                  >
-                    Launch App
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                    </svg>
-                  </Button>
-                </SignUpButton>
-              </SignedOut>
-              <SignedIn>
-                <Button
-                  onClick={() => navigate("/dashboard")}
-                  className="bg-on-primary text-primary hover:bg-on-primary/90 shadow-sm gap-2 px-8 py-[14px] h-auto text-[15px]"
-                >
-                  Go to Dashboard
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
-                </Button>
-              </SignedIn>
+              <Button
+                onClick={connectWallet}
+                className="bg-on-primary text-primary hover:bg-on-primary/90 shadow-sm gap-2 px-8 py-[14px] h-auto text-[15px]"
+              >
+                Connect Wallet
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </Button>
             </div>
           </div>
         </section>
