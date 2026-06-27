@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Sparkles, ChevronDown } from "lucide-react";
+import { X, Send, Sparkles, ChevronDown } from "lucide-react";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
 
@@ -40,13 +40,6 @@ export default function MistralChat() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  useEffect(() => {
-    if (open) {
-      setHasOpened(true);
-      setTimeout(() => inputRef.current?.focus(), 300);
-    }
-  }, [open]);
 
   const sendMessage = useCallback(async () => {
     const text = input.trim();
@@ -109,7 +102,7 @@ export default function MistralChat() {
         <motion.button
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.92 }}
-          onClick={() => setOpen(true)}
+          onClick={() => { setOpen(true); setHasOpened(true); setTimeout(() => inputRef.current?.focus(), 300); }}
           className="w-13 h-13 rounded-full bg-primary text-on-primary shadow-lg hover:bg-primary-active transition-all duration-200 cursor-pointer flex items-center justify-center border-none"
           aria-label="Open AI chat"
         >
@@ -149,10 +142,7 @@ export default function MistralChat() {
             <ChevronDown className="w-3.5 h-3.5" />
           </button>
           <button
-            onClick={() => {
-              setOpen(false);
-              setHasOpened(true);
-            }}
+            onClick={() => setOpen(false)}
             className="w-7 h-7 flex items-center justify-center rounded-lg text-muted hover:text-ink hover:bg-surface-card bg-transparent border-none cursor-pointer transition-colors"
             aria-label="Close chat"
           >

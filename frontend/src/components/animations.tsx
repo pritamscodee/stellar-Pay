@@ -67,20 +67,21 @@ export function AnimatedCounter({
 }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
+  const countRef = useRef(0);
 
   useEffect(() => {
-    if (value <= 0) { setCount(0); return; }
+    if (value <= 0) return;
+    countRef.current = 0;
     const duration = 1500;
     const steps = Math.ceil(duration / 16);
-    let step = 0;
     const increment = value / steps;
     const timer = setInterval(() => {
-      step++;
-      if (step >= steps) {
+      countRef.current++;
+      if (countRef.current >= steps) {
         setCount(value);
         clearInterval(timer);
       } else {
-        setCount(Math.floor(increment * step));
+        setCount(Math.floor(increment * countRef.current));
       }
     }, 16);
     return () => clearInterval(timer);

@@ -4,12 +4,10 @@ import { UserButton, useUser } from "@clerk/clerk-react";
 import { Toaster, toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Wallet, Vote, Activity, BarChart3, Users, Network, Plus,
+  Wallet, Vote, Activity, BarChart3, Users, Plus,
   CheckCircle2, Clock, ExternalLink, LogOut, Zap, Award, Globe,
-  Menu, X, ChevronRight, LayoutDashboard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -38,8 +36,8 @@ import { useTheme } from "./ThemeProvider";
 import { captureWalletConnected, captureVote, capturePollCreated } from "./services/analytics";
 import type { WalletInfo, PollInfo, Feedback, TxStatus, SseStatus } from "./types";
 import {
-  AnimatedContainer, AnimatedItem, AnimatedCounter, MetricCard, GlassCard,
-  AnimatedFeedback, AnimatedTxBanner, containerVariants, itemVariants, fadeIn,
+  AnimatedContainer, AnimatedItem, MetricCard, GlassCard,
+  AnimatedFeedback, AnimatedTxBanner, containerVariants, itemVariants,
 } from "@/components/animations";
 
 const CONTRACT_ID = import.meta.env.VITE_CONTRACT_ID || "CDROSAGWRIQG5TSRF2FFFFXZD3RGPWDS6I3IWUTC67MELRRLZHNOE6ID";
@@ -56,13 +54,6 @@ const DEMO_POLL: PollInfo = {
   totalVotes: 0,
 };
 
-const NAV_ITEMS = [
-  { label: "Dashboard", icon: LayoutDashboard },
-  { label: "Activity", icon: Activity },
-  { label: "Analytics", icon: BarChart3 },
-  { label: "Network", icon: Network },
-];
-
 export default function Dashboard() {
   const { user } = useUser();
   const navigate = useNavigate();
@@ -73,7 +64,6 @@ export default function Dashboard() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [txStatus, setTxStatus] = useState<TxStatus>({ status: "idle" });
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const [poll, setPoll] = useState<PollInfo>(DEMO_POLL);
   const [pollResults, setPollResults] = useState<number[]>(DEMO_POLL.options.map(() => 0));
@@ -824,9 +814,9 @@ export default function Dashboard() {
                                 />
                               )}
                             </div>
-                            <CardDescription className="text-xs">
+                            <p className="text-xs text-muted">
                               {pollActive ? "Active — cast your vote on-chain" : "This poll has ended"}
-                            </CardDescription>
+                            </p>
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
                             <Badge variant={pollActive ? "default" : "outline"} className="text-[11px]">
