@@ -455,7 +455,7 @@ export default function Dashboard() {
 
               <motion.div variants={itemVariants}>
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="font-ui text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                  <span className="font-ui text-[11px] font-medium uppercase tracking-[1.5px] text-body">
                     Supported Wallets
                   </span>
                   <motion.span
@@ -822,7 +822,7 @@ export default function Dashboard() {
                             <Badge variant={pollActive ? "default" : "outline"} className="text-[11px]">
                               {pollActive ? "Active" : "Ended"}
                             </Badge>
-                            <span className="text-xs text-muted font-medium font-mono flex items-center gap-1">
+                            <span className="text-xs text-body font-medium font-mono flex items-center gap-1">
                               <Users className="w-3 h-3" />
                               {totalVotes} votes
                             </span>
@@ -878,7 +878,7 @@ export default function Dashboard() {
                                           </span>
                                           {option}
                                         </span>
-                                        <span className="text-xs text-muted font-mono font-medium tabular-nums">
+                                        <span className="text-xs text-body font-mono font-medium tabular-nums">
                                           {votes} ({pct.toFixed(0)}%)
                                         </span>
                                       </div>
@@ -903,7 +903,7 @@ export default function Dashboard() {
                           <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="text-xs text-muted font-ui"
+                            className="text-xs text-body font-ui"
                           >
                             {alreadyVoted ? (
                               <span className="text-success font-medium flex items-center gap-1.5">
@@ -931,7 +931,7 @@ export default function Dashboard() {
                           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
                             <Activity className="h-3.5 w-3.5" />
                           </div>
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted flex-1">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink flex-1">
                             Live Activity
                           </p>
                           <motion.span
@@ -1025,7 +1025,7 @@ export default function Dashboard() {
                           <Activity className="h-5 w-5" />
                         </div>
                         <div>
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink">
                             All Activity
                           </p>
                           <p className="text-xs text-body">Complete event history from the SSE stream</p>
@@ -1033,7 +1033,7 @@ export default function Dashboard() {
                       </div>
 
                       {liveEvents.length === 0 ? (
-                        <div className="text-center py-12 text-muted text-sm font-ui">
+                        <div className="text-center py-12 text-body text-sm font-ui">
                           No activity yet. Create a poll or vote to see events here.
                         </div>
                       ) : (
@@ -1092,7 +1092,7 @@ export default function Dashboard() {
 
           <div className="flex flex-col gap-4 py-2">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-ui font-medium uppercase tracking-[1.5px] text-muted">
+              <label className="text-[11px] font-ui font-medium uppercase tracking-[1.5px] text-body">
                 Question
               </label>
               <Input
@@ -1112,7 +1112,7 @@ export default function Dashboard() {
                   className="flex flex-col gap-1.5 overflow-hidden"
                 >
                   <div className="flex items-center justify-between">
-                    <label className="text-[11px] font-ui font-medium uppercase tracking-[1.5px] text-muted">
+                    <label className="text-[11px] font-ui font-medium uppercase tracking-[1.5px] text-body">
                       Option {i + 1}
                     </label>
                     {newOptions.length > 2 && (
@@ -1141,7 +1141,7 @@ export default function Dashboard() {
             </motion.div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-ui font-medium uppercase tracking-[1.5px] text-muted">
+              <label className="text-[11px] font-ui font-medium uppercase tracking-[1.5px] text-body">
                 Duration
               </label>
               <div className="flex gap-2">

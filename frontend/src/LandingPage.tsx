@@ -105,7 +105,7 @@ export default function LandingPage() {
             </div>
             <button
               onClick={toggle}
-              className="w-9 h-9 flex items-center justify-center rounded-md border border-hairline bg-canvas text-muted hover:text-ink cursor-pointer transition-all duration-150"
+              className="w-9 h-9 flex items-center justify-center rounded-md border border-hairline bg-canvas text-body hover:text-ink cursor-pointer transition-all duration-150"
               aria-label="Toggle theme"
             >
               {theme === "light" ? (
@@ -139,7 +139,7 @@ export default function LandingPage() {
             </div>
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden w-9 h-9 flex items-center justify-center rounded-md border border-hairline bg-canvas text-muted hover:text-ink cursor-pointer transition-all duration-150"
+              className="md:hidden w-9 h-9 flex items-center justify-center rounded-md border border-hairline bg-canvas text-body hover:text-ink cursor-pointer transition-all duration-150"
               aria-label="Toggle menu"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -372,7 +372,7 @@ export default function LandingPage() {
                       </span>
                       <div>
                         <div className="text-sm font-medium text-ink">{item.label}</div>
-                        <div className="text-xs text-muted mt-0.5">{item.desc}</div>
+                        <div className="text-xs text-body mt-0.5">{item.desc}</div>
                       </div>
                     </div>
                   ))}
