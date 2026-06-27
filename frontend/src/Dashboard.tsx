@@ -365,7 +365,7 @@ export default function Dashboard() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={toggle}
-                className="w-9 h-9 flex items-center justify-center rounded-md border border-hairline bg-canvas text-muted hover:text-ink cursor-pointer transition-all duration-150"
+                className="w-9 h-9 flex items-center justify-center rounded-md border border-hairline bg-canvas text-body/90 hover:text-ink cursor-pointer transition-all duration-150"
                 aria-label="Toggle theme"
               >
                 {theme === "light" ? (
@@ -378,7 +378,7 @@ export default function Dashboard() {
                   </svg>
                 )}
               </motion.button>
-              <span className="text-sm text-muted hidden md:inline font-ui">
+              <span className="text-sm text-body/90 hidden md:inline font-ui">
                 {user?.primaryEmailAddress?.emailAddress}
               </span>
               <UserButton />
@@ -409,7 +409,7 @@ export default function Dashboard() {
                 </motion.h1>
                 <motion.p
                   variants={itemVariants}
-                  className="text-muted text-[15px] leading-relaxed max-w-sm mx-auto mb-8 font-ui"
+                  className="text-body text-[15px] leading-relaxed max-w-sm mx-auto mb-8 font-ui"
                 >
                   Connect a Stellar wallet to vote on polls and interact with the Soroban smart contract.
                 </motion.p>
@@ -491,7 +491,7 @@ export default function Dashboard() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
-              className="mt-5 flex items-center justify-center gap-2 text-xs text-muted"
+              className="mt-5 flex items-center justify-center gap-2 text-xs text-body/80"
             >
               <motion.span
                 animate={{ scale: [1, 1.3, 1] }}
@@ -557,20 +557,20 @@ export default function Dashboard() {
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-pill bg-surface-card/60"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-pill bg-surface-card/85 backdrop-blur-sm"
             >
               <motion.span
                 animate={sseStatus === "connected" ? { scale: [1, 1.3, 1] } : {}}
                 transition={{ duration: 2, repeat: Infinity }}
                 className={`w-1.5 h-1.5 rounded-full ${sseColor}`}
               />
-              <span className="font-ui text-[11px] text-muted font-medium">{sseLabel}</span>
+              <span className="font-ui text-[11px] text-body/90 font-medium">{sseLabel}</span>
             </motion.div>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={toggle}
-              className="w-9 h-9 flex items-center justify-center rounded-md border border-hairline bg-canvas text-muted hover:text-ink cursor-pointer transition-all duration-150"
+              className="w-9 h-9 flex items-center justify-center rounded-md border border-hairline bg-canvas text-body/90 hover:text-ink cursor-pointer transition-all duration-150"
               aria-label="Toggle theme"
             >
               {theme === "light" ? (
@@ -583,7 +583,7 @@ export default function Dashboard() {
                 </svg>
               )}
             </motion.button>
-            <span className="text-sm text-muted hidden md:inline font-ui">
+            <span className="text-sm text-body/90 hidden md:inline font-ui">
               {user?.primaryEmailAddress?.emailAddress}
             </span>
             <UserButton />
@@ -705,7 +705,7 @@ export default function Dashboard() {
                       <span className="text-muted-soft">·</span>
                       <motion.button
                         whileHover={{ x: 2 }}
-                        className="text-[11px] text-muted hover:text-error transition-colors cursor-pointer bg-transparent border-none font-medium font-ui flex items-center gap-1"
+                        className="text-[11px] text-body/80 hover:text-error transition-colors cursor-pointer bg-transparent border-none font-medium font-ui flex items-center gap-1"
                         onClick={handleDisconnect}
                       >
                         <LogOut className="h-3 w-3" /> Disconnect
@@ -803,7 +803,7 @@ export default function Dashboard() {
                         <div className="flex items-start justify-between mb-4">
                           <div>
                             <div className="flex items-center gap-2 mb-1">
-                              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">
+                              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-body/80">
                                 Live Poll
                               </p>
                               {pollLoading ? null : (
@@ -814,7 +814,7 @@ export default function Dashboard() {
                                 />
                               )}
                             </div>
-                            <p className="text-xs text-muted">
+                            <p className="text-xs text-body/80">
                               {pollActive ? "Active — cast your vote on-chain" : "This poll has ended"}
                             </p>
                           </div>
@@ -952,7 +952,7 @@ export default function Dashboard() {
                             <div className="w-12 h-12 rounded-xl bg-surface-soft flex items-center justify-center mb-4">
                               <Clock className="w-5 h-5 text-muted-soft" />
                             </div>
-                            <p className="text-xs text-muted font-ui">No recent activity</p>
+                            <p className="text-xs text-body/80 font-ui">No recent activity</p>
                             <p className="text-xs text-body/70 mt-0.5 font-ui">Be the first to vote!</p>
                           </motion.div>
                         ) : (
@@ -988,13 +988,13 @@ export default function Dashboard() {
                                       {ev.type === "vote" ? (
                                         <>
                                           <span className="font-mono font-semibold text-ink">{truncateKey(ev.voter)}</span>
-                                          <span className="text-muted"> voted for </span>
+                                          <span className="text-body/70"> voted for </span>
                                           <span className="font-semibold text-ink">{poll.options[ev.option] || `Option ${ev.option}`}</span>
                                         </>
                                       ) : (
                                         <>
                                           <span className="font-mono font-semibold text-ink">{truncateKey(ev.creator)}</span>
-                                          <span className="text-muted"> created </span>
+                                          <span className="text-body/70"> created </span>
                                           <span className="font-semibold text-ink">
                                             {ev.question.length > 36 ? ev.question.slice(0, 36) + "..." : ev.question}
                                           </span>
@@ -1058,13 +1058,13 @@ export default function Dashboard() {
                               {ev.type === "vote" ? (
                                 <div className="leading-snug font-ui">
                                   <span className="font-mono font-semibold text-ink">{truncateKey(ev.voter)}</span>
-                                  <span className="text-muted"> voted for </span>
+                                  <span className="text-body/70"> voted for </span>
                                   <span className="font-semibold text-ink">{poll.options[ev.option] || `Option ${ev.option}`}</span>
                                 </div>
                               ) : (
                                 <div className="leading-snug font-ui">
                                   <span className="font-mono font-semibold text-ink">{truncateKey(ev.creator)}</span>
-                                  <span className="text-muted"> created poll </span>
+                                  <span className="text-body/70"> created poll </span>
                                   <span className="font-semibold text-ink">{ev.question}</span>
                                 </div>
                               )}

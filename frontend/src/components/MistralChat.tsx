@@ -130,20 +130,20 @@ export default function MistralChat() {
             <p className="text-sm font-semibold text-ink font-ui leading-tight">
               StellarVote AI
             </p>
-            <p className="text-[10px] text-muted font-ui">Ask me anything</p>
+            <p className="text-[10px] text-body/60 font-ui">Ask me anything</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
           <button
             onClick={clearChat}
-            className="w-7 h-7 flex items-center justify-center rounded-lg text-muted hover:text-ink hover:bg-surface-card bg-transparent border-none text-[10px] cursor-pointer transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-body/80 hover:text-ink hover:bg-surface-card bg-transparent border-none text-[10px] cursor-pointer transition-colors"
             aria-label="Clear chat"
           >
             <ChevronDown className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => setOpen(false)}
-            className="w-7 h-7 flex items-center justify-center rounded-lg text-muted hover:text-ink hover:bg-surface-card bg-transparent border-none cursor-pointer transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-body/80 hover:text-ink hover:bg-surface-card bg-transparent border-none cursor-pointer transition-colors"
             aria-label="Close chat"
           >
             <X className="w-3.5 h-3.5" />
