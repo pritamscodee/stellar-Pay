@@ -417,10 +417,10 @@ All interactions are verifiable on Stellar Expert:
 | **Live Demo** | ✅ [frontend-one-rose-14.vercel.app](https://frontend-one-rose-14.vercel.app) |
 | **Demo Video** | ✅ [Watch Video](https://github.com/user-attachments/assets/d522ae39-22ff-4349-8101-aef049919440) |
 | **Mobile Responsive UI** | ✅ Screenshots below |
-| **Analytics / Monitoring** | ✅ PostHog integrated |
+| **Analytics / Monitoring** | ✅ Visible in Dashboard Analytics tab |
 | **User Feedback Widget** | ✅ Floating feedback button |
 | **Wallet Interactions (10+)** | ✅ See proof below |
-| **User Feedback Summary** | ✅ See below |
+| **User Feedback Summary** | ✅ Visible in Dashboard Feedback tab |
 
 ### 📊 Analytics & Monitoring
 
@@ -433,6 +433,10 @@ All interactions are verifiable on Stellar Expert:
 - **User identification** via Clerk user ID (when available)
 
 To enable analytics, set `VITE_POSTHOG_KEY` in your environment (free at posthog.com).
+
+The **Analytics tab** in the Dashboard displays on-chain stats visible to all users:
+- Total polls created, total votes cast, your votes, XLM balance
+- Live events count, backend status, SSE stream status, network
 
 ### 📱 Mobile Screenshots
 
@@ -448,7 +452,7 @@ A floating feedback button (bottom-right) allows users to submit:
 - Feature ideas
 - General feedback
 
-Feedback is stored locally and can be reviewed by the team.
+Feedback is stored in the backend API and displayed in the **Feedback tab** on the Dashboard, visible to all authenticated users.
 
 ### 🔗 On-Chain Proof of User Interactions
 

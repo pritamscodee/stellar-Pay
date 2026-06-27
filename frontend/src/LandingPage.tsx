@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SignInButton, SignUpButton, SignedIn, SignedOut } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "./ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import AnimatedTestimonials, { type Testimonial } from "./components/AnimatedTestimonials";
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
 
 const features = [
   {
@@ -86,6 +89,29 @@ export default function LandingPage() {
   const { theme, toggle } = useTheme();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/api/feedback`)
+      .then((r) => r.json())
+      .then((data) => {
+        const items = Array.isArray(data) ? data : data.value || [];
+        if (items.length > 0) {
+          const mapped: Testimonial[] = items.map((item: { rating: string; message: string; email: string | null; timestamp: string }) => {
+            const name = item.email ? item.email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Anonymous";
+            return {
+              quote: item.message,
+              name,
+              designation: item.rating === "bug" ? "Bug Report" : item.rating === "idea" ? "Feature Idea" : "User Feedback",
+              src: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=cc785c&color=fff&bold=true&size=256`,
+            };
+          });
+          setTestimonials(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-screen bg-canvas flex flex-col">
       <header className="border-b border-hairline bg-canvas/80 backdrop-blur-sm sticky top-0 z-20">
@@ -411,6 +437,28 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
+        {testimonials.length > 0 && (
+          <section className="py-20 md:py-28 bg-surface-soft/50">
+            <div className="max-w-6xl mx-auto px-6">
+              <div className="text-center mb-14">
+                <Badge variant="outline" className="mb-5 text-[11px] tracking-[1.5px]">
+                  <svg className="w-3.5 h-3.5 mr-1.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                  </svg>
+                  Testimonials
+                </Badge>
+                <h2 className="font-display text-[30px] md:text-[36px] font-normal tracking-[-0.8px] leading-[1.15] text-ink mb-4">
+                  What users are saying
+                </h2>
+                <p className="text-body text-sm max-w-[500px] mx-auto font-ui">
+                  Real feedback from people using StellarVote on the Stellar testnet.
+                </p>
+              </div>
+              <AnimatedTestimonials testimonials={testimonials} autoplay />
+            </div>
+          </section>
+        )}
 
         <section className="py-20 md:py-24">
           <div className="max-w-6xl mx-auto px-6">
