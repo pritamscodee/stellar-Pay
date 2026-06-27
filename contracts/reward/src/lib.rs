@@ -3,7 +3,7 @@ use soroban_sdk::{contract, contractimpl, contracttype, Address, Env};
 
 mod poll_import {
     use soroban_sdk::String as SorobanString;
-    soroban_sdk::contractimport!(file = "../poll/target/wasm32-unknown-unknown/release/stellar_poll.wasm");
+    soroban_sdk::contractimport!(file = "../poll/target/wasm32v1-none/release/stellar_poll.wasm");
 }
 
 use poll_import::Client;
