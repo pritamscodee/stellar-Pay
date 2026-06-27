@@ -1,0 +1,32 @@
+frontend/src/Dashboard.tsx
+  s_15900ec82fa2dd::t_becdd80b951160 715
+  s_15900ec82fa2dd::t_a22c7b597301e2 954
+  s_15900ec82fa2dd::t_f93da9746bda20 966
+  s_15900ec82fa2dd::t_6fb64b948cb410 694
+  s_15900ec82fa2dd::t_b9bffb3b0097b5 667,673,676,681
+  s_15900ec82fa2dd::t_cfb6afd01cd359 735,738
+  s_15900ec82fa2dd::t_ffea8102ef8403 1041
+  s_15900ec82fa2dd::t_f8850bc3dced2a 623
+  s_15900ec82fa2dd::t_6742d176bea48f 700
+  s_15900ec82fa2dd::t_4e147d78c24280 610
+frontend/src/components/animations.tsx
+  s_15900ec82fa2dd::t_b22914e89d1f12 116
+  s_15900ec82fa2dd::t_d80107a2c0fa7d 142
+  s_15900ec82fa2dd::t_1ebe6a88544f47 165
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "9552223011b6e51920a6477fd1d253e95cc1b853",
+  "prompts": {},
+  "sessions": {
+    "s_15900ec82fa2dd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f64c88daffeDjTBuMzcadbVdq",
+        "model": "unknown"
+      },
+      "human_author": "pritamscodee <codewithpritam29@gmail.com>"
+    }
+  }
+}
