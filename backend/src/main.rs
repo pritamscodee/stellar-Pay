@@ -1,6 +1,6 @@
 use axum::{
-    extract::State,
-    http::{header::HeaderName, HeaderValue, Request, StatusCode},
+    extract::{Request, State},
+    http::{header::HeaderName, HeaderValue, StatusCode},
     middleware::{self, Next},
     response::{sse::Event, IntoResponse, Response, Sse},
     routing::{get, post},
@@ -19,7 +19,7 @@ use tower_http::{
     limit::RequestBodyLimitLayer,
     request_id::{MakeRequestId, PropagateRequestIdLayer, RequestId, SetRequestIdLayer},
     set_header::SetResponseHeaderLayer,
-    timeout::RequestTimeoutLayer,
+    timeout::RequestBodyTimeoutLayer,
     trace::TraceLayer,
 };
 use tracing_subscriber;
@@ -103,7 +103,7 @@ where
     }
 }
 
-struct RateLimiter {
+pub(crate) struct RateLimiter {
     requests: Arc<Mutex<HashMap<String, VecDeque<Instant>>>>,
     max_requests: u64,
     window: Duration,
@@ -158,10 +158,10 @@ pub struct AppState {
     pub tx: broadcast::Sender<EventPayload>,
     pub http_client: reqwest::Client,
     pub feedback: Arc<Mutex<VecDeque<FeedbackEntry>>>,
-    pub rate_limiter: Arc<RateLimiter>,
-    pub feedback_limiter: Arc<RateLimiter>,
-    pub chat_limiter: Arc<RateLimiter>,
-    pub publish_limiter: Arc<RateLimiter>,
+    rate_limiter: Arc<RateLimiter>,
+    feedback_limiter: Arc<RateLimiter>,
+    chat_limiter: Arc<RateLimiter>,
+    publish_limiter: Arc<RateLimiter>,
 }
 
 const SYSTEM_PROMPT: &str = "You are StellarVote AI, a helpful assistant for the StellarVote dApp. \
@@ -175,10 +175,11 @@ starting with `[FEEDBACK_SAVED]` containing a JSON object with keys: rating (\"b
 message (their feedback text). Only include this line if they explicitly gave feedback \
 about the app. Example: [FEEDBACK_SAVED]{\"rating\":\"bug\",\"message\":\"The wallet disconnect button is hard to find.\"}";
 
+#[derive(Clone)]
 struct TimestampMakeRequestId;
 
 impl MakeRequestId for TimestampMakeRequestId {
-    fn make_request_id<B>(&mut self, _request: &http::Request<B>) -> Option<RequestId> {
+    fn make_request_id<B>(&mut self, _request: &axum::http::Request<B>) -> Option<RequestId> {
         let id = format!("req-{:016x}",
             std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
@@ -269,7 +270,7 @@ async fn main() {
         ))
         .layer(TraceLayer::new_for_http())
         .layer(RequestBodyLimitLayer::new(1024 * 50))
-        .layer(RequestTimeoutLayer::new(Duration::from_secs(30)));
+        .layer(RequestBodyTimeoutLayer::new(Duration::from_secs(30)));
 
     let addr = format!("0.0.0.0:{_port}");
     tracing::info!("listening on {}", addr);
@@ -438,12 +439,12 @@ async fn chat_handler(
                         if !entry.message.is_empty() {
                             let mut store = state.feedback.lock().unwrap();
                             if store.len() >= 100 { store.pop_front(); }
-                            store.push_back(entry);
                             feedback_saved = Some(serde_json::json!({
                                 "rating": entry.rating,
                                 "message": entry.message,
                                 "timestamp": entry.timestamp,
                             }));
+                            store.push_back(entry);
                         }
                     }
                     reply = reply.lines()
@@ -467,10 +468,10 @@ async fn chat_handler(
     }
 }
 
-async fn global_rate_limit<B>(
+async fn global_rate_limit(
     State(state): State<Arc<AppState>>,
-    req: Request<B>,
-    next: Next<B>,
+    req: Request,
+    next: Next,
 ) -> Response {
     let ip = req
         .headers()
