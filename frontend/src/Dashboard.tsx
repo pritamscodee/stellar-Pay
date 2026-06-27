@@ -5,7 +5,7 @@ import { Toaster, toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Wallet, Vote, Activity, BarChart3, Users, Plus,
-  CheckCircle2, Clock, ExternalLink, LogOut, Zap, Award, Globe, MessageSquare,
+  CheckCircle2, Clock, ExternalLink, LogOut, Zap, Award, Globe,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,7 +41,7 @@ import {
 } from "@/components/animations";
 
 const CONTRACT_ID = import.meta.env.VITE_CONTRACT_ID || "CDROSAGWRIQG5TSRF2FFFFXZD3RGPWDS6I3IWUTC67MELRRLZHNOE6ID";
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://stellar-pay-eia0.onrender.com";
 
 function unixNow(): number {
   return Math.floor(Date.now() / 1000);
@@ -83,9 +83,6 @@ export default function Dashboard() {
   >>([]);
   const [sseStatus, setSseStatus] = useState<SseStatus>("disconnected");
   const [backendOnline, setBackendOnline] = useState(false);
-  const [feedbackItems, setFeedbackItems] = useState<Array<{ rating: string; message: string; email: string | null; timestamp: string }>>([]);
-  const [feedbackLoading, setFeedbackLoading] = useState(false);
-
   useEffect(() => {
     checkBackendHealth().then((result) => setBackendOnline(!!result));
     const id = setInterval(() => {
@@ -93,25 +90,6 @@ export default function Dashboard() {
     }, 30000);
     return () => clearInterval(id);
   }, []);
-
-  const fetchFeedback = useCallback(async () => {
-    setFeedbackLoading(true);
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/feedback`);
-      const data = await res.json();
-      setFeedbackItems(Array.isArray(data) ? data : data.value || []);
-    } catch {
-      setFeedbackItems([]);
-    } finally {
-      setFeedbackLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    const init = setTimeout(fetchFeedback, 0);
-    const id = setInterval(fetchFeedback, 30000);
-    return () => { clearTimeout(init); clearInterval(id); };
-  }, [fetchFeedback]);
 
   const refreshInterval = useRef<ReturnType<typeof setInterval>>(undefined);
   const actionLock = useRef(false);
@@ -809,14 +787,6 @@ export default function Dashboard() {
                     </motion.span>
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="analytics">
-                  <BarChart3 className="w-3.5 h-3.5 mr-1.5" />
-                  Analytics
-                </TabsTrigger>
-                <TabsTrigger value="feedback">
-                  <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
-                  Feedback
-                </TabsTrigger>
               </TabsList>
 
               <AnimatePresence mode="wait">
@@ -957,86 +927,51 @@ export default function Dashboard() {
 
                     <div>
                       <GlassCard className="p-6 h-full">
-                        <div className="flex items-center gap-2 mb-4">
-                          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
-                            <Activity className="h-3.5 w-3.5" />
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                            <BarChart3 className="h-5 w-5" />
                           </div>
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink flex-1">
-                            Live Activity
-                          </p>
-                          <motion.span
-                            animate={sseStatus === "connected" ? { scale: [1, 1.3, 1] } : {}}
-                            transition={{ duration: 2, repeat: Infinity }}
-                            className={`w-2 h-2 rounded-full ${sseColor}`}
-                            title={sseLabel}
-                          />
+                          <div>
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink">
+                              On-Chain Analytics
+                            </p>
+                            <p className="text-xs text-body">Aggregated stats from the Soroban contract</p>
+                          </div>
                         </div>
-                        <p className="text-xs text-body mb-5">Real-time SSE feed</p>
-
-                        {liveEvents.length === 0 ? (
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="flex flex-col items-center justify-center py-10 text-center"
-                          >
-                            <div className="w-12 h-12 rounded-xl bg-surface-soft flex items-center justify-center mb-4">
-                              <Clock className="w-5 h-5 text-muted-soft" />
-                            </div>
-                            <p className="text-xs text-body font-ui">No recent activity</p>
-                            <p className="text-xs text-body mt-0.5 font-ui">Be the first to vote!</p>
-                          </motion.div>
-                        ) : (
-                          <div className="relative">
-                            <motion.div
-                              initial={{ scaleY: 0 }}
-                              animate={{ scaleY: 1 }}
-                              transition={{ duration: 0.8 }}
-                              className="absolute left-[7px] top-2 bottom-2 w-px bg-gradient-to-b from-primary via-primary/50 to-transparent"
-                              style={{ transformOrigin: "top" }}
-                            />
-                            <div className="flex flex-col gap-3">
-                              {liveEvents.slice(0, 10).map((ev, i) => (
-                                <motion.div
-                                  key={`${ev.type}-${i}`}
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: i * 0.05, duration: 0.3 }}
-                                  className="flex items-start gap-3 pl-5 relative"
-                                >
-                                  <motion.span
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    transition={{ delay: i * 0.05 + 0.1, type: "spring" }}
-                                    className={`absolute left-0 top-[6px] w-[15px] h-[15px] rounded-full border-2 border-canvas flex items-center justify-center ${
-                                      ev.type === "vote" ? "bg-primary" : "bg-accent-teal"
-                                    }`}
-                                  >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-canvas" />
-                                  </motion.span>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="text-xs leading-snug font-ui">
-                                      {ev.type === "vote" ? (
-                                        <>
-                                          <span className="font-mono font-semibold text-ink">{truncateKey(ev.voter)}</span>
-                                          <span className="text-body"> voted for </span>
-                                          <span className="font-semibold text-ink">{poll.options[ev.option] || `Option ${ev.option}`}</span>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <span className="font-mono font-semibold text-ink">{truncateKey(ev.creator)}</span>
-                                          <span className="text-body"> created </span>
-                                          <span className="font-semibold text-ink">
-                                            {ev.question.length > 36 ? ev.question.slice(0, 36) + "..." : ev.question}
-                                          </span>
-                                        </>
-                                      )}
-                                    </div>
-                                  </div>
-                                </motion.div>
-                              ))}
-                            </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-surface-soft rounded-xl p-3 text-center">
+                            <p className="text-xl font-bold font-mono text-ink">1</p>
+                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">Total Polls</p>
                           </div>
-                        )}
+                          <div className="bg-surface-soft rounded-xl p-3 text-center">
+                            <p className="text-xl font-bold font-mono text-ink">{totalVotes}</p>
+                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">Total Votes</p>
+                          </div>
+                          <div className="bg-surface-soft rounded-xl p-3 text-center">
+                            <p className="text-xl font-bold font-mono text-ink">{alreadyVoted ? "1" : "0"}</p>
+                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">Your Votes</p>
+                          </div>
+                          <div className="bg-surface-soft rounded-xl p-3 text-center">
+                            <p className="text-xl font-bold font-mono text-ink">{balance !== null ? `${balance}` : "—"}</p>
+                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">XLM Balance</p>
+                          </div>
+                          <div className="bg-surface-soft rounded-xl p-3 text-center">
+                            <p className="text-xl font-bold font-mono text-ink">{liveEvents.length}</p>
+                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">Live Events</p>
+                          </div>
+                          <div className="bg-surface-soft rounded-xl p-3 text-center">
+                            <p className="text-xl font-bold font-mono text-ink">{backendOnline ? "Online" : "Offline"}</p>
+                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">Backend</p>
+                          </div>
+                          <div className="bg-surface-soft rounded-xl p-3 text-center">
+                            <p className="text-xl font-bold font-mono text-ink">{sseStatus === "connected" ? "Live" : sseStatus}</p>
+                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">SSE Stream</p>
+                          </div>
+                          <div className="bg-surface-soft rounded-xl p-3 text-center">
+                            <p className="text-xl font-bold font-mono text-ink">{STELLAR_NETWORK === "PUBLIC" ? "Mainnet" : "Testnet"}</p>
+                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">Network</p>
+                          </div>
+                        </div>
                       </GlassCard>
                     </div>
                   </motion.div>
@@ -1106,125 +1041,7 @@ export default function Dashboard() {
                   </motion.div>
                 </TabsContent>
 
-                <TabsContent value="analytics" key="analytics-tab">
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.25 }}
-                  >
-                    <GlassCard className="p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-                          <BarChart3 className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink">
-                            On-Chain Analytics
-                          </p>
-                          <p className="text-xs text-body">Aggregated stats from the Soroban contract</p>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="bg-surface-soft rounded-xl p-4 text-center">
-                          <p className="text-2xl font-bold font-mono text-ink">1</p>
-                          <p className="text-[11px] text-body font-ui mt-1">Total Polls Created</p>
-                        </div>
-                        <div className="bg-surface-soft rounded-xl p-4 text-center">
-                          <p className="text-2xl font-bold font-mono text-ink">{totalVotes}</p>
-                          <p className="text-[11px] text-body font-ui mt-1">Total Votes Cast</p>
-                        </div>
-                        <div className="bg-surface-soft rounded-xl p-4 text-center">
-                          <p className="text-2xl font-bold font-mono text-ink">{alreadyVoted ? "1" : "0"}</p>
-                          <p className="text-[11px] text-body font-ui mt-1">Your Votes</p>
-                        </div>
-                        <div className="bg-surface-soft rounded-xl p-4 text-center">
-                          <p className="text-2xl font-bold font-mono text-ink">{balance !== null ? `${balance}` : "—"}</p>
-                          <p className="text-[11px] text-body font-ui mt-1">XLM Balance</p>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                        <div className="bg-surface-soft rounded-xl p-4 text-center">
-                          <p className="text-2xl font-bold font-mono text-ink">{liveEvents.length}</p>
-                          <p className="text-[11px] text-body font-ui mt-1">Live Events</p>
-                        </div>
-                        <div className="bg-surface-soft rounded-xl p-4 text-center">
-                          <p className="text-2xl font-bold font-mono text-ink">{backendOnline ? "Online" : "Offline"}</p>
-                          <p className="text-[11px] text-body font-ui mt-1">Backend Status</p>
-                        </div>
-                        <div className="bg-surface-soft rounded-xl p-4 text-center">
-                          <p className="text-2xl font-bold font-mono text-ink">{sseStatus === "connected" ? "Live" : sseStatus}</p>
-                          <p className="text-[11px] text-body font-ui mt-1">SSE Stream</p>
-                        </div>
-                        <div className="bg-surface-soft rounded-xl p-4 text-center">
-                          <p className="text-2xl font-bold font-mono text-ink">{STELLAR_NETWORK === "PUBLIC" ? "Mainnet" : "Testnet"}</p>
-                          <p className="text-[11px] text-body font-ui mt-1">Network</p>
-                        </div>
-                      </div>
-                    </GlassCard>
-                  </motion.div>
-                </TabsContent>
 
-                <TabsContent value="feedback" key="feedback-tab">
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.25 }}
-                  >
-                    <GlassCard className="p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-amber/10 text-accent-amber">
-                          <MessageSquare className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink">
-                            User Feedback
-                          </p>
-                          <p className="text-xs text-body">Collected from Mistral AI conversations</p>
-                        </div>
-                      </div>
-                      {feedbackLoading ? (
-                        <div className="flex flex-col gap-3">
-                          {[1, 2, 3].map((i) => (
-                            <Skeleton key={i} className="h-24 w-full rounded-lg" />
-                          ))}
-                        </div>
-                      ) : feedbackItems.length === 0 ? (
-                        <div className="text-center py-12 text-body text-sm font-ui">
-                          No feedback collected yet.
-                        </div>
-                      ) : (
-                        <div className="flex flex-col gap-3 max-h-[500px] overflow-y-auto">
-                          {feedbackItems.map((item, i) => (
-                            <motion.div
-                              key={i}
-                              initial={{ opacity: 0, y: 8 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: i * 0.05 }}
-                              className="bg-surface-soft rounded-xl p-4 border border-hairline"
-                            >
-                              <div className="flex items-center gap-2 mb-1.5">
-                                <span className={`text-[11px] font-semibold uppercase tracking-wider ${
-                                  item.rating === "bug" ? "text-error" : item.rating === "idea" ? "text-accent-amber" : "text-primary"
-                                }`}>
-                                  {item.rating}
-                                </span>
-                                <span className="text-muted-soft text-[11px] font-mono">
-                                  {new Date(item.timestamp).toLocaleString()}
-                                </span>
-                              </div>
-                              <p className="text-sm text-ink font-ui">{item.message}</p>
-                              {item.email && (
-                                <p className="text-xs text-muted mt-1 font-ui">{item.email}</p>
-                              )}
-                            </motion.div>
-                          ))}
-                        </div>
-                      )}
-                    </GlassCard>
-                  </motion.div>
-                </TabsContent>
               </AnimatePresence>
             </Tabs>
           </AnimatedItem>

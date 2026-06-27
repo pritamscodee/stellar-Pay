@@ -3,7 +3,7 @@ import { publishVoteEvent, publishPollCreatedEvent } from '../services/backend'
 
 describe('Backend Service', () => {
   beforeEach(() => {
-    vi.stubEnv('VITE_BACKEND_URL', 'http://localhost:3001')
+    vi.stubEnv('VITE_BACKEND_URL', 'https://stellar-pay-eia0.onrender.com')
     globalThis.fetch = vi.fn()
   })
 

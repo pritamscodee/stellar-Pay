@@ -8,7 +8,7 @@ const RATINGS: { value: FeedbackRating; label: string; icon: string }[] = [
   { value: "general", label: "General", icon: "💬" },
 ];
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://stellar-pay-eia0.onrender.com";
 
 export default function FeedbackWidget() {
   const [open, setOpen] = useState(false);

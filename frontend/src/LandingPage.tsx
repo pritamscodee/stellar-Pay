@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import AnimatedTestimonials, { type Testimonial } from "./components/AnimatedTestimonials";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://stellar-pay-eia0.onrender.com";
 
 const features = [
   {
@@ -90,10 +90,17 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [testimonialsLoading, setTestimonialsLoading] = useState(true);
+  const [testimonialsError, setTestimonialsError] = useState(false);
 
   useEffect(() => {
+    setTestimonialsLoading(true);
+    setTestimonialsError(false);
     fetch(`${BACKEND_URL}/api/feedback`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to fetch");
+        return r.json();
+      })
       .then((data) => {
         const items = Array.isArray(data) ? data : data.value || [];
         if (items.length > 0) {
@@ -109,7 +116,8 @@ export default function LandingPage() {
           setTestimonials(mapped);
         }
       })
-      .catch(() => {});
+      .catch(() => setTestimonialsError(true))
+      .finally(() => setTestimonialsLoading(false));
   }, []);
 
   return (
@@ -438,7 +446,45 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {testimonials.length > 0 && (
+        {testimonialsLoading ? (
+          <section className="py-20 md:py-28 bg-surface-soft/50">
+            <div className="max-w-6xl mx-auto px-6">
+              <div className="text-center mb-14">
+                <div className="h-8 w-32 bg-surface-soft rounded-lg animate-pulse mx-auto mb-5" />
+                <div className="h-10 w-64 bg-surface-soft rounded-lg animate-pulse mx-auto mb-4" />
+                <div className="h-5 w-80 bg-surface-soft rounded-lg animate-pulse mx-auto" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 max-w-4xl mx-auto">
+                <div className="h-80 bg-surface-soft rounded-3xl animate-pulse" />
+                <div className="space-y-4">
+                  <div className="h-8 w-40 bg-surface-soft rounded-lg animate-pulse" />
+                  <div className="h-4 w-24 bg-surface-soft rounded-lg animate-pulse" />
+                  <div className="space-y-2 mt-8">
+                    <div className="h-4 w-full bg-surface-soft rounded-lg animate-pulse" />
+                    <div className="h-4 w-5/6 bg-surface-soft rounded-lg animate-pulse" />
+                    <div className="h-4 w-4/6 bg-surface-soft rounded-lg animate-pulse" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        ) : testimonialsError ? (
+          <section className="py-20 md:py-28 bg-surface-soft/50">
+            <div className="max-w-6xl mx-auto px-6 text-center">
+              <div className="w-14 h-14 bg-surface-soft rounded-xl flex items-center justify-center mx-auto mb-5">
+                <svg className="w-6 h-6 text-body" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
+              </div>
+              <h2 className="font-display text-[30px] md:text-[36px] font-normal tracking-[-0.8px] leading-[1.15] text-ink mb-4">
+                Testimonials
+              </h2>
+              <p className="text-body text-sm max-w-[500px] mx-auto font-ui">
+                Unable to load testimonials right now. Check back later.
+              </p>
+            </div>
+          </section>
+        ) : testimonials.length > 0 ? (
           <section className="py-20 md:py-28 bg-surface-soft/50">
             <div className="max-w-6xl mx-auto px-6">
               <div className="text-center mb-14">
@@ -458,7 +504,7 @@ export default function LandingPage() {
               <AnimatedTestimonials testimonials={testimonials} autoplay />
             </div>
           </section>
-        )}
+        ) : null}
 
         <section className="py-20 md:py-24">
           <div className="max-w-6xl mx-auto px-6">
