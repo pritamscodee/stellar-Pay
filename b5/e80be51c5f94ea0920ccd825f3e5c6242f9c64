@@ -1,0 +1,32 @@
+frontend/src/FeedbackView.tsx
+  s_15900ec82fa2dd::t_20c073880f7b24 3
+frontend/src/components/MistralChat.tsx
+  s_15900ec82fa2dd::t_8a7f2c5149418a 6
+frontend/src/FeedbackWidget.tsx
+  s_15900ec82fa2dd::t_62df7e2043e339 11
+frontend/src/LandingPage.tsx
+  s_15900ec82fa2dd::t_026b3cd13c01b3 10
+  s_15900ec82fa2dd::t_482f9de5693d0f 93-94,97-98,100-103,119-120
+  s_15900ec82fa2dd::t_eb63e8fae6ce98 449-487,507
+frontend/src/Dashboard.tsx
+  s_15900ec82fa2dd::t_8c7f276e79ddd6 44
+  s_15900ec82fa2dd::t_77bd604d632a94 8
+  s_15900ec82fa2dd::t_0ad06a4ce67298 930-938,941-944,946-973
+  s_15900ec82fa2dd::t_0aa6922236c01c 974
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "b5e80be51c5f94ea0920ccd825f3e5c6242f9c64",
+  "prompts": {},
+  "sessions": {
+    "s_15900ec82fa2dd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f64c88daffeDjTBuMzcadbVdq",
+        "model": "unknown"
+      },
+      "human_author": "pritamscodee <codewithpritam29@gmail.com>"
+    }
+  }
+}
