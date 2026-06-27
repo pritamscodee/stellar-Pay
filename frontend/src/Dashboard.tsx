@@ -365,7 +365,7 @@ export default function Dashboard() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={toggle}
-                className="w-9 h-9 flex items-center justify-center rounded-md border border-hairline bg-canvas text-body/90 hover:text-ink cursor-pointer transition-all duration-150"
+                className="w-9 h-9 flex items-center justify-center rounded-md border border-hairline bg-canvas text-ink hover:text-ink cursor-pointer transition-all duration-150"
                 aria-label="Toggle theme"
               >
                 {theme === "light" ? (
@@ -378,7 +378,7 @@ export default function Dashboard() {
                   </svg>
                 )}
               </motion.button>
-              <span className="text-sm text-body/90 hidden md:inline font-ui">
+              <span className="text-sm text-ink hidden md:inline font-ui">
                 {user?.primaryEmailAddress?.emailAddress}
               </span>
               <UserButton />
@@ -491,7 +491,7 @@ export default function Dashboard() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
-              className="mt-5 flex items-center justify-center gap-2 text-xs text-body/80"
+              className="mt-5 flex items-center justify-center gap-2 text-xs text-body"
             >
               <motion.span
                 animate={{ scale: [1, 1.3, 1] }}
@@ -564,13 +564,13 @@ export default function Dashboard() {
                 transition={{ duration: 2, repeat: Infinity }}
                 className={`w-1.5 h-1.5 rounded-full ${sseColor}`}
               />
-              <span className="font-ui text-[11px] text-body/90 font-medium">{sseLabel}</span>
+              <span className="font-ui text-[11px] text-ink font-medium">{sseLabel}</span>
             </motion.div>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={toggle}
-              className="w-9 h-9 flex items-center justify-center rounded-md border border-hairline bg-canvas text-body/90 hover:text-ink cursor-pointer transition-all duration-150"
+              className="w-9 h-9 flex items-center justify-center rounded-md border border-hairline bg-canvas text-ink hover:text-ink cursor-pointer transition-all duration-150"
               aria-label="Toggle theme"
             >
               {theme === "light" ? (
@@ -583,7 +583,7 @@ export default function Dashboard() {
                 </svg>
               )}
             </motion.button>
-            <span className="text-sm text-body/90 hidden md:inline font-ui">
+            <span className="text-sm text-ink hidden md:inline font-ui">
               {user?.primaryEmailAddress?.emailAddress}
             </span>
             <UserButton />
@@ -597,7 +597,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-2 mb-1">
               <Badge
                 variant="outline"
-                className="inline-flex items-center gap-2 rounded-full border-hairline/50 bg-surface-card/85 px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] text-body/80 backdrop-blur-sm"
+                className="inline-flex items-center gap-2 rounded-full border-hairline/50 bg-surface-card/85 px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] text-body backdrop-blur-sm"
               >
                 <motion.span
                   animate={{ scale: [1, 1.3, 1] }}
@@ -660,15 +660,15 @@ export default function Dashboard() {
                       <Wallet className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-body/80">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-body">
                         Wallet
                       </p>
-                      <p className="text-xs text-body/70">Connected account</p>
+                      <p className="text-xs text-body">Connected account</p>
                     </div>
                   </div>
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-body/80 font-ui">Address</span>
+                      <span className="text-xs text-body font-ui">Address</span>
                       <div className="flex items-center gap-1.5">
                         <motion.span
                           animate={{ scale: [1, 1.3, 1] }}
@@ -681,13 +681,13 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-body/80 font-ui">Balance</span>
+                      <span className="text-xs text-body font-ui">Balance</span>
                       <span className="text-sm font-mono font-semibold text-ink font-mono">
                         {balance !== null ? `${balance} XLM` : "—"}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-body/80 font-ui">Network</span>
+                      <span className="text-xs text-body font-ui">Network</span>
                       <Badge variant="outline" className="text-[11px] font-mono">
                         <motion.span
                           animate={backendOnline ? { scale: [1, 1.3, 1] } : {}}
@@ -705,7 +705,7 @@ export default function Dashboard() {
                       <span className="text-muted-soft">·</span>
                       <motion.button
                         whileHover={{ x: 2 }}
-                        className="text-[11px] text-body/80 hover:text-error transition-colors cursor-pointer bg-transparent border-none font-medium font-ui flex items-center gap-1"
+                        className="text-[11px] text-body hover:text-error transition-colors cursor-pointer bg-transparent border-none font-medium font-ui flex items-center gap-1"
                         onClick={handleDisconnect}
                       >
                         <LogOut className="h-3 w-3" /> Disconnect
@@ -722,10 +722,10 @@ export default function Dashboard() {
                       <Award className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-body/80">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-body">
                         Poll Contract
                       </p>
-                      <p className="text-xs text-body/70">Deployed on Stellar testnet</p>
+                      <p className="text-xs text-body">Deployed on Stellar testnet</p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
@@ -803,7 +803,7 @@ export default function Dashboard() {
                         <div className="flex items-start justify-between mb-4">
                           <div>
                             <div className="flex items-center gap-2 mb-1">
-                              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-body/80">
+                              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-body">
                                 Live Poll
                               </p>
                               {pollLoading ? null : (
@@ -814,7 +814,7 @@ export default function Dashboard() {
                                 />
                               )}
                             </div>
-                            <p className="text-xs text-body/80">
+                            <p className="text-xs text-body">
                               {pollActive ? "Active — cast your vote on-chain" : "This poll has ended"}
                             </p>
                           </div>
@@ -941,7 +941,7 @@ export default function Dashboard() {
                             title={sseLabel}
                           />
                         </div>
-                        <p className="text-xs text-body/70 mb-5">Real-time SSE feed</p>
+                        <p className="text-xs text-body mb-5">Real-time SSE feed</p>
 
                         {liveEvents.length === 0 ? (
                           <motion.div
@@ -952,8 +952,8 @@ export default function Dashboard() {
                             <div className="w-12 h-12 rounded-xl bg-surface-soft flex items-center justify-center mb-4">
                               <Clock className="w-5 h-5 text-muted-soft" />
                             </div>
-                            <p className="text-xs text-body/80 font-ui">No recent activity</p>
-                            <p className="text-xs text-body/70 mt-0.5 font-ui">Be the first to vote!</p>
+                            <p className="text-xs text-body font-ui">No recent activity</p>
+                            <p className="text-xs text-body mt-0.5 font-ui">Be the first to vote!</p>
                           </motion.div>
                         ) : (
                           <div className="relative">
@@ -988,13 +988,13 @@ export default function Dashboard() {
                                       {ev.type === "vote" ? (
                                         <>
                                           <span className="font-mono font-semibold text-ink">{truncateKey(ev.voter)}</span>
-                                          <span className="text-body/70"> voted for </span>
+                                          <span className="text-body"> voted for </span>
                                           <span className="font-semibold text-ink">{poll.options[ev.option] || `Option ${ev.option}`}</span>
                                         </>
                                       ) : (
                                         <>
                                           <span className="font-mono font-semibold text-ink">{truncateKey(ev.creator)}</span>
-                                          <span className="text-body/70"> created </span>
+                                          <span className="text-body"> created </span>
                                           <span className="font-semibold text-ink">
                                             {ev.question.length > 36 ? ev.question.slice(0, 36) + "..." : ev.question}
                                           </span>
@@ -1028,7 +1028,7 @@ export default function Dashboard() {
                           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">
                             All Activity
                           </p>
-                          <p className="text-xs text-body/70">Complete event history from the SSE stream</p>
+                          <p className="text-xs text-body">Complete event history from the SSE stream</p>
                         </div>
                       </div>
 
@@ -1058,13 +1058,13 @@ export default function Dashboard() {
                               {ev.type === "vote" ? (
                                 <div className="leading-snug font-ui">
                                   <span className="font-mono font-semibold text-ink">{truncateKey(ev.voter)}</span>
-                                  <span className="text-body/70"> voted for </span>
+                                  <span className="text-body"> voted for </span>
                                   <span className="font-semibold text-ink">{poll.options[ev.option] || `Option ${ev.option}`}</span>
                                 </div>
                               ) : (
                                 <div className="leading-snug font-ui">
                                   <span className="font-mono font-semibold text-ink">{truncateKey(ev.creator)}</span>
-                                  <span className="text-body/70"> created poll </span>
+                                  <span className="text-body"> created poll </span>
                                   <span className="font-semibold text-ink">{ev.question}</span>
                                 </div>
                               )}

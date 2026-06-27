@@ -99,7 +99,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-3">
             <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-pill bg-surface-card/85 backdrop-blur-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-teal animate-pulse" />
-              <span className="font-ui text-[11px] font-medium uppercase tracking-[1px] text-body/80">
+              <span className="font-ui text-[11px] font-medium uppercase tracking-[1px] text-body">
                 Stellar Testnet
               </span>
             </div>

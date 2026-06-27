@@ -140,7 +140,7 @@ export function MetricCard({
           )}
         </div>
         <div className="space-y-0.5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-body/80">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-body">
             {label}
           </p>
           <p className="text-2xl font-semibold tracking-tight text-ink">
