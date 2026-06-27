@@ -1,0 +1,41 @@
+frontend/.node-version
+  s_15900ec82fa2dd::t_9efc36ade9642d 1
+frontend/src/Dashboard.tsx
+  s_15900ec82fa2dd::t_6f5f1f2594277e 1108-1227
+  s_15900ec82fa2dd::t_2a453844cd318d 812-819
+  s_15900ec82fa2dd::t_b8a3932335f194 97-107,109-110,112,114-115
+  s_15900ec82fa2dd::t_cb2217dc474c4e 111,113
+  s_15900ec82fa2dd::t_2513ff918c2d61 44
+  s_15900ec82fa2dd::t_204289037b5a2c 8
+  s_15900ec82fa2dd::t_c16505988b5cfd 86-87
+  s_15900ec82fa2dd::t_7f05e60a5c39b3 108
+frontend/src/LandingPage.tsx
+  s_15900ec82fa2dd::t_8d7c2635d3d105 1,8-10
+  s_15900ec82fa2dd::t_ad7475edd2be00 92
+  s_15900ec82fa2dd::t_84f466fb8fe4b9 99-110
+  s_15900ec82fa2dd::t_f7ac42c9df165e 441-462
+  s_15900ec82fa2dd::t_1349213da26ee6 93-98,111-114
+frontend/src/components/AnimatedTestimonials.tsx
+  s_15900ec82fa2dd::t_c0d63efab18a07 2
+  s_15900ec82fa2dd::t_8d9a3575ff6871 30
+  s_15900ec82fa2dd::t_452a8e73cd35bb 33-38
+  s_15900ec82fa2dd::t_98834142a7e34e 1,3-4
+  s_15900ec82fa2dd::t_2a8f021b23cd24 5-12,17-18,20-21,23,25,27,31-32,39,41-42,88,90-91,129,144-148
+  s_15900ec82fa2dd::t_f4bf810de1e66a 13-16,19,22,24,26,28-29,40,43-87,89,92-128,130-143
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "486de40e355b29ae33ee9fc59677bd15fc50eb67",
+  "prompts": {},
+  "sessions": {
+    "s_15900ec82fa2dd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f64c88daffeDjTBuMzcadbVdq",
+        "model": "unknown"
+      },
+      "human_author": "pritamscodee <codewithpritam29@gmail.com>"
+    }
+  }
+}
