@@ -796,17 +796,20 @@ export default function Dashboard() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.25 }}
-                    className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+                    className="grid grid-cols-1 lg:grid-cols-5 gap-6"
                   >
-                    <div className="lg:col-span-2">
+                    <div className="lg:col-span-3">
                       <GlassCard className="p-6">
-                        <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-start justify-between mb-5">
                           <div>
-                            <div className="flex items-center gap-2 mb-1">
+                            <div className="flex items-center gap-2.5 mb-1">
+                              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10">
+                                <Vote className="h-3.5 w-3.5 text-primary" />
+                              </div>
                               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-body">
                                 Live Poll
                               </p>
-                              {pollLoading ? null : (
+                              {!pollLoading && (
                                 <motion.span
                                   animate={pollActive ? { scale: [1, 1.3, 1] } : {}}
                                   transition={{ duration: 2, repeat: Infinity }}
@@ -814,7 +817,7 @@ export default function Dashboard() {
                                 />
                               )}
                             </div>
-                            <p className="text-xs text-body">
+                            <p className="text-xs text-body ml-9">
                               {pollActive ? "Active — cast your vote on-chain" : "This poll has ended"}
                             </p>
                           </div>
@@ -839,9 +842,9 @@ export default function Dashboard() {
                         ) : (
                           <>
                             <motion.h2
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              className="font-display text-[24px] md:text-[26px] font-normal tracking-[-0.5px] leading-[1.2] text-ink mb-5"
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="font-display text-[22px] md:text-[24px] font-normal tracking-[-0.4px] leading-[1.2] text-ink mb-5"
                             >
                               {poll.question}
                             </motion.h2>
@@ -849,7 +852,7 @@ export default function Dashboard() {
                               variants={containerVariants}
                               initial="hidden"
                               animate="visible"
-                              className="flex flex-col gap-3"
+                              className="flex flex-col gap-2.5"
                             >
                               {poll.options.map((option, index) => {
                                 const votes = pollResults[index] || 0;
@@ -863,7 +866,7 @@ export default function Dashboard() {
                                     whileTap={isSelected || !pollActive ? {} : { scale: 0.99 }}
                                   >
                                     <button
-                                      className={`w-full text-left p-4 rounded-lg border transition-all duration-150 cursor-pointer ${
+                                      className={`w-full text-left p-4 rounded-xl border transition-all duration-150 cursor-pointer ${
                                         isSelected
                                           ? "bg-surface-card border-hairline cursor-default"
                                           : "bg-canvas border-hairline hover:border-primary hover:bg-surface-soft hover:shadow-elevated"
@@ -873,7 +876,9 @@ export default function Dashboard() {
                                     >
                                       <div className="flex items-center justify-between mb-2.5">
                                         <span className="text-sm font-medium text-ink flex items-center gap-2.5 font-ui">
-                                          <span className="w-6 h-6 rounded-md bg-primary-disabled text-primary text-[12px] font-medium flex items-center justify-center shrink-0 font-mono">
+                                          <span className={`w-7 h-7 rounded-lg text-[12px] font-semibold flex items-center justify-center shrink-0 font-mono ${
+                                            isSelected ? "bg-primary/10 text-primary" : "bg-surface-soft text-body"
+                                          }`}>
                                             {String.fromCharCode(65 + index)}
                                           </span>
                                           {option}
@@ -882,7 +887,7 @@ export default function Dashboard() {
                                           {votes} ({pct.toFixed(0)}%)
                                         </span>
                                       </div>
-                                      <div className="w-full h-2.5 bg-surface-soft rounded-full overflow-hidden">
+                                      <div className="w-full h-3 bg-surface-soft rounded-full overflow-hidden">
                                         <motion.div
                                           initial={{ width: 0 }}
                                           animate={{ width: `${pct}%` }}
@@ -925,51 +930,110 @@ export default function Dashboard() {
                       </GlassCard>
                     </div>
 
-                    <div>
-                      <GlassCard className="p-6 h-full">
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-                            <BarChart3 className="h-5 w-5" />
+                    <div className="lg:col-span-2 flex flex-col gap-4">
+                      <GlassCard className="p-5">
+                        <div className="flex items-center gap-2.5 mb-4">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-teal/10">
+                            <Activity className="h-4 w-4 text-accent-teal" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink flex items-center gap-2">
+                              Live Activity
+                              <motion.span
+                                animate={sseStatus === "connected" ? { scale: [1, 1.3, 1] } : {}}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className={`w-1.5 h-1.5 rounded-full ${sseColor}`}
+                              />
+                            </p>
+                            <p className="text-[10px] text-body">Real-time SSE feed</p>
+                          </div>
+                        </div>
+                        {liveEvents.length === 0 ? (
+                          <div className="flex flex-col items-center justify-center py-6 text-center">
+                            <div className="w-10 h-10 rounded-lg bg-surface-soft flex items-center justify-center mb-3">
+                              <Clock className="w-4 h-4 text-muted-soft" />
+                            </div>
+                            <p className="text-xs text-body font-ui">No recent activity</p>
+                            <p className="text-xs text-body mt-0.5 font-ui">Be the first to vote!</p>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-2">
+                            {liveEvents.slice(0, 5).map((ev, i) => (
+                              <motion.div
+                                key={`${ev.type}-${i}`}
+                                initial={{ opacity: 0, x: -8 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.05, duration: 0.2 }}
+                                className="flex items-start gap-2.5 px-2 py-2 rounded-lg hover:bg-surface-soft transition-colors"
+                              >
+                                <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${ev.type === "vote" ? "bg-primary" : "bg-accent-teal"}`} />
+                                <div className="text-[12px] leading-snug font-ui min-w-0">
+                                  {ev.type === "vote" ? (
+                                    <>
+                                      <span className="font-mono font-semibold text-ink">{truncateKey(ev.voter)}</span>
+                                      <span className="text-body"> voted for </span>
+                                      <span className="font-semibold text-ink">{poll.options[ev.option] || `Option ${ev.option}`}</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span className="font-mono font-semibold text-ink">{truncateKey(ev.creator)}</span>
+                                      <span className="text-body"> created </span>
+                                      <span className="font-semibold text-ink">
+                                        {ev.question.length > 36 ? ev.question.slice(0, 36) + "..." : ev.question}
+                                      </span>
+                                    </>
+                                  )}
+                                </div>
+                              </motion.div>
+                            ))}
+                          </div>
+                        )}
+                      </GlassCard>
+
+                      <GlassCard className="p-5">
+                        <div className="flex items-center gap-2.5 mb-4">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                            <BarChart3 className="h-4 w-4 text-primary" />
                           </div>
                           <div>
                             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink">
-                              On-Chain Analytics
+                              Analytics
                             </p>
-                            <p className="text-xs text-body">Aggregated stats from the Soroban contract</p>
+                            <p className="text-[10px] text-body">On-chain metrics</p>
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="bg-surface-soft rounded-xl p-3 text-center">
-                            <p className="text-xl font-bold font-mono text-ink">1</p>
-                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">Total Polls</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="bg-surface-soft rounded-lg p-2.5 text-center">
+                            <p className="text-lg font-bold font-mono text-ink">1</p>
+                            <p className="text-[9px] text-body font-ui mt-0.5">Polls</p>
                           </div>
-                          <div className="bg-surface-soft rounded-xl p-3 text-center">
-                            <p className="text-xl font-bold font-mono text-ink">{totalVotes}</p>
-                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">Total Votes</p>
+                          <div className="bg-surface-soft rounded-lg p-2.5 text-center">
+                            <p className="text-lg font-bold font-mono text-ink">{totalVotes}</p>
+                            <p className="text-[9px] text-body font-ui mt-0.5">Votes</p>
                           </div>
-                          <div className="bg-surface-soft rounded-xl p-3 text-center">
-                            <p className="text-xl font-bold font-mono text-ink">{alreadyVoted ? "1" : "0"}</p>
-                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">Your Votes</p>
+                          <div className="bg-surface-soft rounded-lg p-2.5 text-center">
+                            <p className="text-lg font-bold font-mono text-ink">{alreadyVoted ? "1" : "0"}</p>
+                            <p className="text-[9px] text-body font-ui mt-0.5">Your Votes</p>
                           </div>
-                          <div className="bg-surface-soft rounded-xl p-3 text-center">
-                            <p className="text-xl font-bold font-mono text-ink">{balance !== null ? `${balance}` : "—"}</p>
-                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">XLM Balance</p>
+                          <div className="bg-surface-soft rounded-lg p-2.5 text-center">
+                            <p className="text-lg font-bold font-mono text-ink">{balance !== null ? `${balance}` : "—"}</p>
+                            <p className="text-[9px] text-body font-ui mt-0.5">XLM</p>
                           </div>
-                          <div className="bg-surface-soft rounded-xl p-3 text-center">
-                            <p className="text-xl font-bold font-mono text-ink">{liveEvents.length}</p>
-                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">Live Events</p>
+                          <div className="bg-surface-soft rounded-lg p-2.5 text-center">
+                            <p className="text-lg font-bold font-mono text-ink">{liveEvents.length}</p>
+                            <p className="text-[9px] text-body font-ui mt-0.5">Events</p>
                           </div>
-                          <div className="bg-surface-soft rounded-xl p-3 text-center">
-                            <p className="text-xl font-bold font-mono text-ink">{backendOnline ? "Online" : "Offline"}</p>
-                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">Backend</p>
+                          <div className="bg-surface-soft rounded-lg p-2.5 text-center">
+                            <p className="text-lg font-bold font-mono text-ink">{backendOnline ? "Online" : "Offline"}</p>
+                            <p className="text-[9px] text-body font-ui mt-0.5">Backend</p>
                           </div>
-                          <div className="bg-surface-soft rounded-xl p-3 text-center">
-                            <p className="text-xl font-bold font-mono text-ink">{sseStatus === "connected" ? "Live" : sseStatus}</p>
-                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">SSE Stream</p>
+                          <div className="bg-surface-soft rounded-lg p-2.5 text-center">
+                            <p className="text-lg font-bold font-mono text-ink">{sseStatus === "connected" ? "Live" : sseStatus}</p>
+                            <p className="text-[9px] text-body font-ui mt-0.5">SSE</p>
                           </div>
-                          <div className="bg-surface-soft rounded-xl p-3 text-center">
-                            <p className="text-xl font-bold font-mono text-ink">{STELLAR_NETWORK === "PUBLIC" ? "Mainnet" : "Testnet"}</p>
-                            <p className="text-[10px] text-body font-ui mt-1 leading-tight">Network</p>
+                          <div className="bg-surface-soft rounded-lg p-2.5 text-center">
+                            <p className="text-lg font-bold font-mono text-ink">{STELLAR_NETWORK === "PUBLIC" ? "Mainnet" : "Testnet"}</p>
+                            <p className="text-[9px] text-body font-ui mt-0.5">Network</p>
                           </div>
                         </div>
                       </GlassCard>
