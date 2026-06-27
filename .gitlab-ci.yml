@@ -1,0 +1,91 @@
+image: ubuntu:24.04
+
+variables:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: short
+
+stages:
+  - frontend
+  - contract
+  - backend
+
+frontend-lint:
+  stage: frontend
+  image: node:22
+  cache:
+    - key:
+        files:
+          - frontend/package-lock.json
+      paths:
+        - frontend/node_modules/
+  before_script:
+    - cd frontend && npm install
+  script:
+    - cd frontend && npm run lint
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"
+
+frontend-build:
+  stage: frontend
+  image: node:22
+  cache:
+    - key:
+        files:
+          - frontend/package-lock.json
+      paths:
+        - frontend/node_modules/
+  before_script:
+    - cd frontend && npm install
+  script:
+    - cd frontend && npm run build
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"
+
+frontend-test:
+  stage: frontend
+  image: node:22
+  cache:
+    - key:
+        files:
+          - frontend/package-lock.json
+      paths:
+        - frontend/node_modules/
+  before_script:
+    - cd frontend && npm install
+  script:
+    - cd frontend && npm test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"
+
+contract-poll:
+  stage: contract
+  image: rust:latest
+  before_script:
+    - rustup target add wasm32v1-none
+  script:
+    - cd contracts/poll
+    - for i in 1 2 3; do cargo build --target wasm32v1-none --release && break; sleep 5; done
+    - for i in 1 2 3; do cargo test && break; sleep 5; done
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"
+
+contract-reward:
+  stage: contract
+  image: rust:latest
+  before_script:
+    - rustup target add wasm32v1-none
+  script:
+    - cd contracts/poll && for i in 1 2 3; do cargo build --target wasm32v1-none --release && break; sleep 5; done
+    - cd contracts/reward && for i in 1 2 3; do cargo build --target wasm32v1-none --release && break; sleep 5; done
+    - cd contracts/reward && for i in 1 2 3; do cargo test && break; sleep 5; done
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"
+
+backend-build:
+  stage: backend
+  image: rust:latest
+  script:
+    - cd backend
+    - for i in 1 2 3; do cargo build --release && break; sleep 5; done
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"
