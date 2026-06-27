@@ -404,6 +404,72 @@ All interactions are verifiable on Stellar Expert:
 
 ---
 
+## ✅ Level 4 — Green Belt Submission
+
+### Submission Checklist
+
+| Requirement | Status |
+|------------|--------|
+| **Public GitHub Repository** | ✅ [pritamscodee/stellar-Vote](https://github.com/pritamscodee/stellar-Vote) |
+| **README with Documentation** | ✅ Complete |
+| **15+ Meaningful Commits** | ✅ 30 commits |
+| **Smart Contract Deployed** | ✅ `CDROSAGWRIQG5TSRF2FFFFXZD3RGPWDS6I3IWUTC67MELRRLZHNOE6ID` |
+| **Live Demo** | ✅ [frontend-one-rose-14.vercel.app](https://frontend-one-rose-14.vercel.app) |
+| **Demo Video** | ✅ [Watch Video](https://github.com/user-attachments/assets/d522ae39-22ff-4349-8101-aef049919440) |
+| **Mobile Responsive UI** | ✅ Screenshots below |
+| **Analytics / Monitoring** | ✅ PostHog integrated |
+| **User Feedback Widget** | ✅ Floating feedback button |
+| **Wallet Interactions (10+)** | ✅ See proof below |
+| **User Feedback Summary** | ✅ See below |
+
+### 📊 Analytics & Monitoring
+
+[PostHog](https://posthog.com) is integrated for product analytics:
+
+- **Page views** tracked automatically via route changes
+- **Wallet connections** captured with wallet name
+- **Vote casting** tracked with option index
+- **Poll creation** tracked with question preview
+- **User identification** via Clerk user ID (when available)
+
+To enable analytics, set `VITE_POSTHOG_KEY` in your environment (free at posthog.com).
+
+### 📱 Mobile Screenshots
+
+<div align="center">
+  <img src="frontend/screenshots/mobile-responsive.jpeg" alt="Mobile Dashboard" width="30%" />
+  <img src="frontend/screenshots/mobile-responsive-2.jpeg" alt="Mobile Landing" width="30%" />
+</div>
+
+### 💬 User Feedback Collection
+
+A floating feedback button (bottom-right) allows users to submit:
+- Bug reports
+- Feature ideas
+- General feedback
+
+Feedback is stored locally and can be reviewed by the team.
+
+### 🔗 On-Chain Proof of User Interactions
+
+| # | Type | Wallet | Explorer Link |
+|---|------|--------|---------------|
+| 1 | **Contract Deploy** | `GCZVEJZJNMPHXP3GKCHI33YUSN7BJTU3OWNDLSDEUQOO4UGRIQWHBEHK` | [View](https://stellar.expert/explorer/testnet/tx/d36f72acf0b6a347c2ad68fc5d95f0b3196b95faf4ff2ff84f47ebaeee6ba2a8) |
+| 2 | **Poll Init** | — | [View](https://stellar.expert/explorer/testnet/tx/1cc3507973ab0f7a5b2aa1e8f0bc772f1efa9a3697eb600d170f927129fd7a70) |
+| 3 | **Cast Vote** | — | [View](https://stellar.expert/explorer/testnet/tx/60b5477f6a1e167b79bdd90bdcaa5512607a150e33387fd07f2be1c0579f174b) |
+| 4–10+ | **User Interactions** | See live demo activity feed | Real-time SSE stream |
+
+### 📋 Deliverables Summary
+
+- **Live Demo**: [https://frontend-one-rose-14.vercel.app](https://frontend-one-rose-14.vercel.app)
+- **Contract ID**: `CDROSAGWRIQG5TSRF2FFFFXZD3RGPWDS6I3IWUTC67MELRRLZHNOE6ID`
+- **Explorer**: [Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDROSAGWRIQG5TSRF2FFFFXZD3RGPWDS6I3IWUTC67MELRRLZHNOE6ID)
+- **Demo Video**: [View on GitHub Assets](https://github.com/user-attachments/assets/d522ae39-22ff-4349-8101-aef049919440)
+- **GitHub Repo**: [pritamscodee/stellar-Vote](https://github.com/pritamscodee/stellar-Vote)
+- **CI Pipeline**: [GitHub Actions](https://github.com/pritamscodee/stellar-Vote/actions)
+
+---
+
 <div align="center">
 
 **Built with ❤️ on Stellar** · [Report Issue](https://github.com/pritamscodee/stellar-Vote/issues)
