@@ -8,7 +8,7 @@ axum = "0.8"
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tower-http = { version = "0.6", features = ["cors"] }
+tower-http = { version = "0.6", features = ["cors", "limit", "timeout", "request-id", "set-header", "trace"] }
 tracing = "0.1"
 tracing-subscriber = "0.3"
 futures = "0.3"

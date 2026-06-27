@@ -61,10 +61,10 @@ contract-poll:
   stage: contract
   image: rust:latest
   before_script:
-    - rustup target add wasm32v1-none
+    - rustup target add wasm32-unknown-unknown
   script:
     - cd contracts/poll
-    - for i in 1 2 3; do cargo build --target wasm32v1-none --release && break; sleep 5; done
+    - for i in 1 2 3; do cargo build --target wasm32-unknown-unknown --release && break; sleep 5; done
     - for i in 1 2 3; do cargo test && break; sleep 5; done
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -73,10 +73,10 @@ contract-reward:
   stage: contract
   image: rust:latest
   before_script:
-    - rustup target add wasm32v1-none
+    - rustup target add wasm32-unknown-unknown
   script:
-    - cd contracts/poll && for i in 1 2 3; do cargo build --target wasm32v1-none --release && break; sleep 5; done
-    - cd contracts/reward && for i in 1 2 3; do cargo build --target wasm32v1-none --release && break; sleep 5; done
+    - cd contracts/poll && for i in 1 2 3; do cargo build --target wasm32-unknown-unknown --release && break; sleep 5; done
+    - cd contracts/reward && for i in 1 2 3; do cargo build --target wasm32-unknown-unknown --release && break; sleep 5; done
     - cd contracts/reward && for i in 1 2 3; do cargo test && break; sleep 5; done
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"
