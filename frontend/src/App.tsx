@@ -5,6 +5,7 @@ import LandingPage from "./LandingPage";
 import Dashboard from "./Dashboard";
 import ErrorBoundary from "./ErrorBoundary";
 import MistralChat from "./components/MistralChat";
+import FeedbackView from "./FeedbackView";
 import { capturePageView } from "./services/analytics";
 
 function PageTracker() {
@@ -33,6 +34,7 @@ function App() {
             </SignedOut>
           </>
         } />
+        <Route path="/admin/feedback" element={<FeedbackView />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <MistralChat />

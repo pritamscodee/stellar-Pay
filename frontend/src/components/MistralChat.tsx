@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Sparkles, ChevronDown } from "lucide-react";
+import { captureFeedback } from "../services/analytics";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
 
@@ -63,6 +64,9 @@ export default function MistralChat() {
         ...prev,
         { role: "assistant", content: data.reply },
       ]);
+      if (data.feedback_saved) {
+        captureFeedback(data.feedback_saved.rating, data.feedback_saved.message);
+      }
     } catch {
       setMessages((prev) => [
         ...prev,

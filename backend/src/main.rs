@@ -50,6 +50,8 @@ pub struct ChatRequest {
 #[derive(Clone, Debug, Serialize)]
 pub struct ChatResponse {
     pub reply: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub feedback_saved: Option<serde_json::Value>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -250,6 +252,8 @@ async fn chat_handler(
                     .unwrap_or("Sorry, I couldn't process that.")
                     .to_string();
 
+                let mut feedback_saved: Option<serde_json::Value> = None;
+
                 if let Some(fb_line) = reply.lines().find(|l| l.starts_with("[FEEDBACK_SAVED]")) {
                     let json_str = fb_line.trim_start_matches("[FEEDBACK_SAVED]");
                     if let Ok(fb) = serde_json::from_str::<serde_json::Value>(json_str) {
@@ -263,13 +267,19 @@ async fn chat_handler(
                         if !entry.message.is_empty() {
                             let mut store = state.feedback.lock().unwrap();
                             if store.len() >= 100 { store.pop_front(); }
-                            store.push_back(entry);
+                            store.push_back(entry.clone());
+                            feedback_saved = Some(serde_json::json!({
+                                "rating": entry.rating,
+                                "message": entry.message,
+                                "email": entry.email,
+                                "timestamp": entry.timestamp,
+                            }));
                         }
                     }
                     reply = reply.lines().filter(|l| !l.starts_with("[FEEDBACK_SAVED]")).collect::<Vec<_>>().join("\n");
                 }
 
-                (StatusCode::OK, Json(ChatResponse { reply })).into_response()
+                (StatusCode::OK, Json(ChatResponse { reply, feedback_saved })).into_response()
             } else {
                 (
                     StatusCode::INTERNAL_SERVER_ERROR,

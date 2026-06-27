@@ -48,3 +48,10 @@ export function captureWalletConnected(address: string, walletName: string): voi
     wallet: walletName,
   });
 }
+
+export function captureFeedback(rating: string, message: string): void {
+  captureEvent("feedback_submitted", {
+    rating,
+    message: message.slice(0, 200),
+  });
+}
