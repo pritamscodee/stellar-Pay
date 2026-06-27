@@ -1,0 +1,21 @@
+frontend/src/components/ui/tabs.tsx
+  s_15900ec82fa2dd::t_68ab13acae7891 25
+  s_15900ec82fa2dd::t_b435f3da98305b 59,62
+  s_15900ec82fa2dd::t_56538e42f5a016 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "0ae1cf2d3077b43cd2e9abb821b7f24703137b1a",
+  "prompts": {},
+  "sessions": {
+    "s_15900ec82fa2dd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f64c88daffeDjTBuMzcadbVdq",
+        "model": "unknown"
+      },
+      "human_author": "pritamscodee <codewithpritam29@gmail.com>"
+    }
+  }
+}
