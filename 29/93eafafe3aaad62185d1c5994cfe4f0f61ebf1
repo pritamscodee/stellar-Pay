@@ -1,0 +1,28 @@
+backend/render.yaml
+  s_15900ec82fa2dd::t_55e179dede8fa6 1-8
+  s_15900ec82fa2dd::t_15080afc3acbb0 9
+backend/src/main.rs
+  s_15900ec82fa2dd::t_b668bf41c2f348 2,5,41-56,60,63-68,74-75,81,136,138,160-218
+frontend/src/components/MistralChat.tsx
+  s_15900ec82fa2dd::t_995a66cb18464b 1-246
+frontend/src/LandingPage.tsx
+  s_15900ec82fa2dd::t_5b02f3bef24141 100,102
+backend/Cargo.lock
+  s_15900ec82fa2dd::t_5667e372bcc0d9 85-90,97-102,109-118,125-176,184-211,214-219,317-363,419,428-459,468,470-471,475-477,479-480,483-597,600-605,612-622,635-646,688-705,714,723-765,801-815,834-839,850-851,853-887,890-971,976-998,1074-1079,1109,1112-1117,1125,1134-1139,1156-1203,1214-1223,1238,1252-1284,1309,1311,1313,1316,1389-1394,1401-1424,1431-1445,1452-1516,1523-1560,1570-1722
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "2993eafafe3aaad62185d1c5994cfe4f0f61ebf1",
+  "prompts": {},
+  "sessions": {
+    "s_15900ec82fa2dd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f64c88daffeDjTBuMzcadbVdq",
+        "model": "unknown"
+      },
+      "human_author": "pritamscodee <codewithpritam29@gmail.com>"
+    }
+  }
+}
