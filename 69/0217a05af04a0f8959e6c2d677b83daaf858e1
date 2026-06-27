@@ -1,0 +1,19 @@
+.github/workflows/ci.yml
+  s_15900ec82fa2dd::t_120b59f7954f46 29,42,47,67,73,79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "690217a05af04a0f8959e6c2d677b83daaf858e1",
+  "prompts": {},
+  "sessions": {
+    "s_15900ec82fa2dd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f64c88daffeDjTBuMzcadbVdq",
+        "model": "unknown"
+      },
+      "human_author": "pritamscodee <codewithpritam29@gmail.com>"
+    }
+  }
+}
